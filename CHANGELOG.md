@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to Spindle (formerly SpiderMem) are listed here. Versions follow [Semantic Versioning](https://semver.org/). Until 1.0, minor versions may change the memory format; the installer migrates older memories when they do.
+All notable changes to Spindle are listed here. Versions follow [Semantic Versioning](https://semver.org/). Until 1.0, minor versions may change the memory format; the installer migrates older memories when they do.
 
 ## [0.6.0] - 2026-10-29
 
@@ -13,10 +13,6 @@ All notable changes to Spindle (formerly SpiderMem) are listed here. Versions fo
 - `SPIDER_WEB`, `SPIDER_HOOK_QUIET` and a `spider/` memory folder are still recognised, so nothing breaks before you upgrade.
 
 ## [0.5.1] - 2026-10-29
-
-### Changed
-- Renamed the project from SpiderMem to **Spindle**: the part of a spider that spins its thread. Command names, the `spider/` memory folder and `spider.py` are unchanged, so existing installs keep working.
-- The repository moves to github.com/AbhiAuto/Spindle. GitHub redirects the old address.
 
 ### Fixed
 - Removed an outdated self-install copy of the skills, prompts and instructions from `.github/` (the real sources live in `skills/` and `vscode/`).

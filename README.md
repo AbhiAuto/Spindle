@@ -5,8 +5,6 @@
   <img alt="Spindle: team memory for AI-assisted test automation" src="assets/banner-light.svg" width="680">
 </picture>
 
-*Formerly SpiderMem.*
-
 **Your AI assistant remembers what your team already built, fixed and learned, so every new test pack starts from experience instead of from scratch.**
 
 [![Version](https://img.shields.io/badge/version-0.6.0-6f42c1)](CHANGELOG.md)
@@ -251,7 +249,7 @@ The latest release is **0.6.0**. Each version is listed in the [changelog](CHANG
 | Version | Highlights |
 |---|---|
 | **0.6.0** | Spindle names throughout: `spindle/` memory, `/spindle-*` commands, `spindle.py`. Older installs upgrade automatically |
-| 0.5.1 | Renamed from SpiderMem to Spindle |
+| 0.5.1 | Removed an outdated copy of the skills from `.github/` |
 | 0.5.0 | Secret removal, shortcut detection, error signatures, ranked matching, governed mode, efficacy, stamp, evals and CI |
 | 0.4.x | Memory kits (export/import), shared Claude + Copilot repo layout |
 | 0.3.x | Capability catalogue, "use when" triggers, commit reminder, `spider/` folder |
