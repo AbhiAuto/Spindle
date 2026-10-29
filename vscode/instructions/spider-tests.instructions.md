@@ -1,8 +1,8 @@
 ---
-description: 'Spider: reuse team memory whenever tests or test helpers are written or changed'
+description: 'Spindle: reuse team memory whenever tests or test helpers are written or changed'
 applyTo: '**/*.spec.ts,**/*.spec.js,**/*.test.ts,**/*.test.js,**/*.cy.ts,**/*.cy.js,**/test_*.py,**/*_test.py,**/*Test.java,**/*Tests.cs,**/*.feature,**/*.robot,**/tests/**,**/e2e/**,**/pages/**,**/fixtures/**,**/helpers/**,**/utils/**,**/support/**,**/steps/**'
 ---
-This repo has a Spider team memory in `spider/`. Use it every time you write or change a test, page object, fixture or helper, whether or not a slash command was used.
+This repo has a Spindle team memory in `spider/`. Use it every time you write or change a test, page object, fixture or helper, whether or not a slash command was used.
 
 Before writing code:
 

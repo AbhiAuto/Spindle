@@ -151,7 +151,7 @@ class HookTest(unittest.TestCase):
             run("git", "add", "-A")
             r = run("git", "-c", "user.email=a@b", "-c", "user.name=t", "commit", "-qm", "x")
             self.assertEqual(r.returncode, 0, r.stderr)
-            self.assertIn("Spider: you changed reusable test code", r.stderr)
+            self.assertIn("Spindle: you changed reusable test code", r.stderr)
 
 
 if __name__ == "__main__":

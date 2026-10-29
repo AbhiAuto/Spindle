@@ -1,6 +1,6 @@
-# Using Spider with other LLMs
+# Using Spindle with other LLMs
 
-Spider is just instructions plus a folder of markdown, so it works anywhere the model can see the instructions. How well it works depends on whether the tool can read and write your files.
+Spindle is just instructions plus a folder of markdown, so it works anywhere the model can see the instructions. How well it works depends on whether the tool can read and write your files.
 
 ## Tools that can read and write files
 

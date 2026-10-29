@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Spider: a role-aware work memory kept as plain markdown.
+"""Spindle: a role-aware work memory kept as plain markdown.
 
 Standard library only. Python 3.8+.
 

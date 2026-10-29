@@ -1,11 +1,11 @@
 ---
 name: spider-pack-builder
-description: Builds a new test automation pack (regression, smoke, API, E2E suite or set of test scripts) from what the team did before, using the Spider memory in spider/. Use when asked to create, scaffold or extend a test pack, test suite or automation scripts for an application or module, or on /new-pack.
+description: Builds a new test automation pack (regression, smoke, API, E2E suite or set of test scripts) from what the team did before, using the Spindle memory in spider/. Use when asked to create, scaffold or extend a test pack, test suite or automation scripts for an application or module, or on /new-pack.
 ---
 
-# Spider pack builder
+# Spindle pack builder
 
-Builds a new automation pack that looks like the team wrote it: same framework, same conventions, reusing the page objects and helpers that already exist, and avoiding the problems the team already hit. It reads the Spider memory first and writes back what it learned at the end.
+Builds a new automation pack that looks like the team wrote it: same framework, same conventions, reusing the page objects and helpers that already exist, and avoiding the problems the team already hit. It reads the Spindle memory first and writes back what it learned at the end.
 
 Needs the `spider` skill and a web created with the `test-automation-engineer` role (normally `spider/` at the workspace root).
 

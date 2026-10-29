@@ -1,5 +1,5 @@
 ---
-description: 'Spider: ask the team memory'
+description: 'Spindle: ask the team memory'
 agent: 'agent'
 argument-hint: 'Your question, e.g. how do we handle OTP login?'
 ---

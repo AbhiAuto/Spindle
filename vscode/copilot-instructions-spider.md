@@ -1,7 +1,7 @@
 <!-- spider:start -->
-## Spider memory
+## Spindle memory
 
-This workspace keeps a team memory in `spider/` (Spider skill in `.github/skills/spider`).
+This workspace keeps a team memory in `spider/` (Spindle skill in `.github/skills/spider`).
 
 - Before answering questions about past work, the frameworks, applications under test, flaky tests or reusable code, use the `spider_*` MCP tools if available (`spider_match` for "what applies to this scenario"), otherwise read `spider/index.md` and only the threads you need.
 - When asked to create or extend a test pack, use the `spider-pack-builder` skill. Before writing any new helper, run `spider_match` and reuse what exists.

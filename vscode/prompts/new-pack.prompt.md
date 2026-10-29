@@ -1,5 +1,5 @@
 ---
-description: 'Spider: create a test automation pack from team memory'
+description: 'Spindle: create a test automation pack from team memory'
 agent: 'agent'
 argument-hint: 'App or module, pack type (smoke, regression, API, E2E), scope'
 ---

@@ -1,6 +1,6 @@
-# Contributing to SpiderMem
+# Contributing to Spindle
 
-The best thing you can add is a role file for a job Spider doesn't cover yet: recruiter, product manager, lawyer, teacher, researcher, support lead.
+The best thing you can add is a role file for a job Spindle doesn't cover yet: recruiter, product manager, lawyer, teacher, researcher, support lead.
 
 1. Copy `skills/spider/roles/_template.md` to `skills/spider/roles/<role-name>.md`.
 2. Fill it in from real experience of the job. Shortcuts should be questions people in that role actually ask.

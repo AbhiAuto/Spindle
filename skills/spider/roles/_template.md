@@ -31,7 +31,7 @@ Anything specific to your job or your employer's rules.
 
 ## Shortcuts
 
-Questions you'll ask often, and how Spider should answer them.
+Questions you'll ask often, and how Spindle should answer them.
 
 - "What's open?" : all `commitment open` strands, oldest due date first.
 - "Catch me up on X" : the X thread, last 10 strands, plus open commitments and linked people.

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Install Spider into a VS Code workspace (Copilot or Claude).
+"""Install Spindle into a VS Code workspace (Copilot or Claude).
 
   python install_vscode.py <your-repo> [--role test-automation-engineer] [--name "Your Name"]
 
@@ -122,7 +122,7 @@ def prepare_memory_folder(target):
             ga.write_text(ga.read_text(encoding="utf-8").replace("spider-web/", "spider/"), encoding="utf-8")
             print("Updated the spider path in .gitattributes")
     elif web.exists() and not web_is_memory and any(web.iterdir()):
-        raise SystemExit("This repo already has a folder called spider/ that isn't a Spider memory. "
+        raise SystemExit("This repo already has a folder called spider/ that isn't a Spindle memory. "
                          "Rename it, then run the installer again. Nothing was changed.")
     return web
 
@@ -178,15 +178,15 @@ def main(argv=None):
           "(loaded automatically when Copilot works on tests and helpers)")
 
     pr = gh / "pull_request_template.md"
-    line = "- [ ] Spider memory updated (`/remember` or `/log-gotcha`), or nothing worth remembering"
+    line = "- [ ] Spindle memory updated (`/remember` or `/log-gotcha`), or nothing worth remembering"
     if not pr.is_file():
         shutil.copyfile(HERE / "vscode" / "pull_request_template.md", pr)
         print("PR template created with a memory checkbox")
-    elif "Spider memory updated" not in pr.read_text(encoding="utf-8"):
+    elif "Spindle memory updated" not in pr.read_text(encoding="utf-8"):
         pr.write_text(pr.read_text(encoding="utf-8").rstrip() + "\n" + line + "\n", encoding="utf-8")
         print("Memory checkbox added to your PR template")
-    if "Spider memory stamp" not in pr.read_text(encoding="utf-8"):
-        pr.write_text(pr.read_text(encoding="utf-8").rstrip() + "\n\nSpider memory stamp: [output of `spider.py stamp spider`]\n",
+    if "Spindle memory stamp" not in pr.read_text(encoding="utf-8"):
+        pr.write_text(pr.read_text(encoding="utf-8").rstrip() + "\n\nSpindle memory stamp: [output of `spider.py stamp spider`]\n",
                       encoding="utf-8")
 
     if a.ci:
@@ -196,10 +196,10 @@ def main(argv=None):
 
     block = localise((HERE / "vscode" / "copilot-instructions-spider.md").read_text(encoding="utf-8"), skills_rel)
     action = merge_instructions(gh / "copilot-instructions.md", block)
-    print(f"Spider instructions {action} .github/copilot-instructions.md")
+    print(f"Spindle instructions {action} .github/copilot-instructions.md")
     if (target / "AGENTS.md").is_file():
-        merge_instructions(target / "AGENTS.md", block.replace("## Spider memory", "## Spider memory (team memory for every assistant)"))
-        print("Spider section added to AGENTS.md (read by Claude Code, Copilot's coding agent and other tools)")
+        merge_instructions(target / "AGENTS.md", block.replace("## Spindle memory", "## Spindle memory (team memory for every assistant)"))
+        print("Spindle section added to AGENTS.md (read by Claude Code, Copilot's coding agent and other tools)")
 
     if not a.no_mcp and ((target / ".mcp.json").is_file() or (target / ".claude").is_dir()):
         if merge_claude_mcp(target / ".mcp.json", a.python, skills_rel):
@@ -240,7 +240,7 @@ def main(argv=None):
             npm = shutil.which("npm")
             r = subprocess.run([npm, "run", "-s", "ai:sync"], cwd=target, capture_output=True, text=True) if npm else None
             if r is not None and r.returncode == 0:
-                print("Ran npm run ai:sync, so Claude Code gets the Spider commands too")
+                print("Ran npm run ai:sync, so Claude Code gets the Spindle commands too")
             else:
                 print("This repo syncs Copilot prompts to Claude Code: run `npm run ai:sync` and commit the result")
 

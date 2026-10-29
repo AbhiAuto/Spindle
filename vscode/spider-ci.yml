@@ -1,6 +1,6 @@
-# Spider memory checks: structure, secrets and retrieval evals.
+# Spindle memory checks: structure, secrets and retrieval evals.
 # Fails the build when the memory is broken, holds a secret, or finds less than it used to.
-name: Spider memory
+name: Spindle memory
 on:
   pull_request:
     paths: ["spider/**", ".github/skills/spider/**", ".claude/skills/spider/**"]

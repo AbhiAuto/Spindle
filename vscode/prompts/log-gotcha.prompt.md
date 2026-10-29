@@ -1,5 +1,5 @@
 ---
-description: 'Spider: log a flaky test or problem and its fix'
+description: 'Spindle: log a flaky test or problem and its fix'
 agent: 'agent'
 argument-hint: 'Symptom, root cause, fix'
 ---
@@ -10,4 +10,4 @@ ${input:gotcha} (for example: Upload widget times out in SIT. Cause: virus scan 
 
 Error text (paste the message the test failed with, if there was one): ${input:error}
 
-Store the error text with the gotcha (`error` in spider_add, or `--error`) so pasting it later finds this fix. Include the test or file path if we know it. If the fix was a shortcut (sleep, force, raised timeout, removed assertion), say so: Spider will store it as `avoid`, and ask me for the proper fix. Confirm the wording with me once before writing.
+Store the error text with the gotcha (`error` in spider_add, or `--error`) so pasting it later finds this fix. Include the test or file path if we know it. If the fix was a shortcut (sleep, force, raised timeout, removed assertion), say so: Spindle will store it as `avoid`, and ask me for the proper fix. Confirm the wording with me once before writing.

@@ -1,5 +1,5 @@
 ---
-description: 'Spider: review memory health, pattern evidence and what to prune'
+description: 'Spindle: review memory health, pattern evidence and what to prune'
 agent: 'agent'
 ---
 Use the spider skill to review the health of this project's memory. Change nothing; show me what needs a decision.

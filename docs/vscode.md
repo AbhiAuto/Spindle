@@ -1,13 +1,13 @@
-# Spider in VS Code
+# Spindle in VS Code
 
-Spider runs inside VS Code with GitHub Copilot (agent mode) or the Claude extension. No vector database, no server to host. The memory is a `spider/` folder of markdown next to your code, and the agent finds things through the index, names, tags and links, the same way a person would.
+Spindle runs inside VS Code with GitHub Copilot (agent mode) or the Claude extension. No vector database, no server to host. The memory is a `spider/` folder of markdown next to your code, and the agent finds things through the index, names, tags and links, the same way a person would.
 
 ## What gets installed
 
 ```
 your-automation-repo/
   .github/
-    copilot-instructions.md        Spider block added (your own text is kept)
+    copilot-instructions.md        Spindle block added (your own text is kept)
     skills/spider/                 memory skill, roles, CLI, MCP server
     skills/spider-pack-builder/    builds new test packs from memory
     prompts/                       /spider-harvest /new-pack /recall /remember /log-gotcha /spider-review /spider-export /spider-import
@@ -25,11 +25,11 @@ Copilot finds skills in `.github/skills/` and prompt files in `.github/prompts/`
 You need Python 3.8+ on the machine. Nothing else.
 
 ```bash
-git clone https://github.com/AbhiAuto/SpiderMem.git
-python SpiderMem/install_vscode.py path/to/your-automation-repo --name "Your team"
+git clone https://github.com/AbhiAuto/Spindle.git
+python Spindle/install_vscode.py path/to/your-automation-repo --name "Your team"
 ```
 
-Run the same command again later to update Spider. It never touches `spider/`.
+Run the same command again later to update Spindle. It never touches `spider/`.
 
 On Windows the MCP server uses `python`. On macOS and Linux it uses `python3`. Change it with `--python` if your machine is different.
 
@@ -37,7 +37,7 @@ On Windows the MCP server uses `python`. On macOS and Linux it uses `python3`. C
 
 1. Open the repo in VS Code and trust the `spider` MCP server when asked (or start it from the MCP servers view).
 2. Open Copilot Chat in **Agent** mode.
-3. Run `/spider-harvest`. Spider scans the repo (nothing is executed), shows what it found (stack, layout, page objects, helpers, fixtures, data, tags, retries, skipped tests, CI), reads a few key files to pick up your conventions, and writes it all after you confirm.
+3. Run `/spider-harvest`. Spindle scans the repo (nothing is executed), shows what it found (stack, layout, page objects, helpers, fixtures, data, tags, retries, skipped tests, CI), reads a few key files to pick up your conventions, and writes it all after you confirm.
 
 The memory is useful from that point on.
 
@@ -114,7 +114,7 @@ Export the reusable part of one project's memory as a kit, then import it into a
 python3 .github/skills/spider/scripts/spider.py export spider kits/pw-kit.zip --name pw-kit --redact "ClientName, Codename" --dry-run
 python3 .github/skills/spider/scripts/spider.py export spider kits/pw-kit.zip --name pw-kit --redact "ClientName, Codename"
 
-# in the target repo (after installing Spider there)
+# in the target repo (after installing Spindle there)
 python3 .github/skills/spider/scripts/spider.py import spider path/to/pw-kit.zip --dry-run
 python3 .github/skills/spider/scripts/spider.py import spider path/to/pw-kit.zip
 ```
@@ -131,8 +131,8 @@ In Copilot, `/spider-export` and `/spider-import` walk through the same steps wi
 `examples/sample-playwright-repo` is a small made-up Playwright repo with a team memory already in it: a framework thread, an app with gotchas and data rules, an OTP pattern and a past regression pack.
 
 ```bash
-cp -r SpiderMem/examples/sample-playwright-repo ~/spider-demo
-python SpiderMem/install_vscode.py ~/spider-demo
+cp -r Spindle/examples/sample-playwright-repo ~/spider-demo
+python Spindle/install_vscode.py ~/spider-demo
 code ~/spider-demo
 ```
 
@@ -146,4 +146,4 @@ If MCP servers are blocked on your machine, install with `--no-mcp`. The skills 
 
 - Search is by words, names, tags and aliases, not meaning. Add aliases and tags to threads so related words still find them.
 - It works well up to a few thousand threads. Past that, SQLite full-text search is the next step, and it still doesn't need a vector database.
-- Generated tests still need an engineer's review. Spider makes packs consistent and quicker to build. It doesn't decide what's worth testing.
+- Generated tests still need an engineer's review. Spindle makes packs consistent and quicker to build. It doesn't decide what's worth testing.

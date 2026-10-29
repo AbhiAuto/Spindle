@@ -37,7 +37,7 @@ At the end of the task (once, not per file), offer to remember if any of these h
 - A pack, or a big part of one, was finished
 - A new convention was agreed or an old one changed
 
-If the only thing that worked was a shortcut (a sleep, `force`, a raised timeout, more retries, a removed assertion), Spider stores it as `avoid`. Record the proper fix as soon as it's known, and include the error text so the fix can be found by pasting the error.
+If the only thing that worked was a shortcut (a sleep, `force`, a raised timeout, more retries, a removed assertion), Spindle stores it as `avoid`. Record the proper fix as soon as it's known, and include the error text so the fix can be found by pasting the error.
 
 When creating a `pattern` thread, always give it `use_when` triggers: the words people use when they need it, including other names for the same thing (otp, mfa, 2fa, two-step, one-time code).
 

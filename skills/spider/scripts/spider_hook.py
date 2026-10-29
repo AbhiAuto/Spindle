@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Git pre-commit reminder: reusable test code changed but Spider memory didn't.
+"""Git pre-commit reminder: reusable test code changed but Spindle memory didn't.
 
 Never blocks a commit. Prints a short reminder so work done outside Copilot
 (or when Copilot forgot to ask) still ends up in memory.
@@ -21,7 +21,7 @@ CODE_EXT = (".ts", ".js", ".tsx", ".jsx", ".mjs", ".py", ".java", ".cs", ".kt", 
 TEST_FILE = re.compile(r"(\.spec\.|\.test\.|\.cy\.|^test_|_test\.py$|Tests?\.(java|cs|kt)$)")
 MARK = "spider_hook.py"
 HOOK = """#!/bin/sh
-# Spider: remind to update team memory (never blocks the commit)
+# Spindle: remind to update team memory (never blocks the commit)
 if command -v python3 >/dev/null 2>&1; then P=python3; else P=python; fi
 "$P" .github/skills/spider/scripts/spider_hook.py || true
 """
@@ -41,7 +41,7 @@ def reminder(staged):
     if not changed:
         return None
     shown = ", ".join(changed[:5]) + (f" (+{len(changed) - 5} more)" if len(changed) > 5 else "")
-    return ("\nSpider: you changed reusable test code (" + shown + ") but not the team memory.\n"
+    return ("\nSpindle: you changed reusable test code (" + shown + ") but not the team memory.\n"
             "  Run /remember in Copilot Chat to save what it does, then re-run /spider-harvest\n"
             "  to refresh the capability catalogue. Skip if there's nothing worth keeping.\n")
 
@@ -55,7 +55,7 @@ def install():
     if path.is_file():
         text = path.read_text(encoding="utf-8", errors="ignore")
         if MARK in text:
-            print("Spider reminder already in the pre-commit hook.")
+            print("Spindle reminder already in the pre-commit hook.")
             return 0
         print(f"A pre-commit hook already exists at {path}. Add this line to it yourself:\n"
               f"  python3 .github/skills/spider/scripts/spider_hook.py || true")
@@ -66,7 +66,7 @@ def install():
         path.chmod(0o755)
     except OSError:
         pass
-    print(f"Spider reminder added to {path}")
+    print(f"Spindle reminder added to {path}")
     return 0
 
 

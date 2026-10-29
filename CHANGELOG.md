@@ -1,6 +1,15 @@
 # Changelog
 
-All notable changes to SpiderMem are listed here. Versions follow [Semantic Versioning](https://semver.org/). Until 1.0, minor versions may change the memory format; the installer migrates older memories when they do.
+All notable changes to Spindle (formerly SpiderMem) are listed here. Versions follow [Semantic Versioning](https://semver.org/). Until 1.0, minor versions may change the memory format; the installer migrates older memories when they do.
+
+## [0.5.1] - 2026-10-29
+
+### Changed
+- Renamed the project from SpiderMem to **Spindle**: the part of a spider that spins its thread. Command names, the `spider/` memory folder and `spider.py` are unchanged, so existing installs keep working.
+- The repository moves to github.com/AbhiAuto/Spindle. GitHub redirects the old address.
+
+### Fixed
+- Removed an outdated self-install copy of the skills, prompts and instructions from `.github/` (the real sources live in `skills/` and `vscode/`).
 
 ## [0.5.0] - 2026-10-29
 
@@ -59,4 +68,5 @@ All notable changes to SpiderMem are listed here. Versions follow [Semantic Vers
 ### Added
 - Role-shaped markdown memory (threads and strands), a CLI, role templates and tests.
 
-[0.5.0]: https://github.com/AbhiAuto/SpiderMem/releases/tag/v0.5.0
+[0.5.1]: https://github.com/AbhiAuto/Spindle/releases/tag/v0.5.1
+[0.5.0]: https://github.com/AbhiAuto/Spindle/releases/tag/v0.5.0

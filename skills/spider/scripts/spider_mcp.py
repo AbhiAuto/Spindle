@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Spider MCP server (stdio). Standard library only.
+"""Spindle MCP server (stdio). Standard library only.
 
 Gives VS Code (Copilot agent mode), Claude and any MCP client proper tools
-for the Spider memory instead of shelling out.
+for the Spindle memory instead of shelling out.
 
 Web location: SPIDER_WEB env var, else ./spider in the working folder
 (./spider-web for installs made before the rename).
@@ -60,7 +60,7 @@ TOOLS = [
                       ["thread", "kind", "text"])},
     {"name": "spider_feedback",
      "description": "After applying a pattern or gotcha, record whether it was used, helped, or pointed the wrong way "
-                    "(wrong needs a reason). This is how Spider learns which patterns actually help.",
+                    "(wrong needs a reason). This is how Spindle learns which patterns actually help.",
      "inputSchema": S("", {"thread": STR, "event": {"type": "string", "enum": ["used", "helped", "wrong"]},
                            "why": STR, "by": STR}, ["thread", "event"])},
     {"name": "spider_candidates",

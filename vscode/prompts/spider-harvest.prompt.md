@@ -1,5 +1,5 @@
 ---
-description: 'Spider: build memory from this automation repo'
+description: 'Spindle: build memory from this automation repo'
 agent: 'agent'
 argument-hint: 'Optional: folder of the automation repo (defaults to the workspace)'
 ---

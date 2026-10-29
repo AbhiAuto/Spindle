@@ -127,7 +127,7 @@ def cmd_export(a):
         "threads": str(len(files)), "strands": str(n_strands),
         "types": types if not only else sorted({t.meta.get("type") for t, _ in chosen}), "kinds": kinds,
     }) + (
-        f"\n# Spider memory kit: {name}\n\n"
+        f"\n# Spindle memory kit: {name}\n\n"
         f"Reusable memory exported from another project: {len(files)} threads, {n_strands} strands.\n\n"
         "- Client details were scrubbed: source references, URLs, emails, IP addresses, linked threads that "
         f"were not exported, and {len(terms)} client names and aliases (replaced with [client]).\n"
@@ -142,7 +142,7 @@ def cmd_export(a):
     for p in sorted(files):
         print(f"  {p}")
     if a.dry_run:
-        print("\nDry run. Nothing written. Check the list, add --redact for any client names Spider can't know, "
+        print("\nDry run. Nothing written. Check the list, add --redact for any client names Spindle can't know, "
               "then run again without --dry-run.")
         for p in sorted(files)[:1]:
             print(f"\nPreview of {p}:\n" + files[p])
@@ -224,7 +224,7 @@ def read_kit(path):
     for d in dropped:
         print(f"  ignored   {d}")
     if "kit.md" not in files:
-        raise SystemExit(f"{path} has no kit.md, so it isn't a Spider memory kit.")
+        raise SystemExit(f"{path} has no kit.md, so it isn't a Spindle memory kit.")
     return files
 
 

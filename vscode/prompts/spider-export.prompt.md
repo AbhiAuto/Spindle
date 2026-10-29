@@ -1,5 +1,5 @@
 ---
-description: 'Spider: export reusable memory as a kit for another project'
+description: 'Spindle: export reusable memory as a kit for another project'
 agent: 'agent'
 argument-hint: 'Kit name, and any client names to hide'
 ---

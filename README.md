@@ -2,12 +2,14 @@
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/banner-dark.svg">
-  <img alt="SpiderMem: team memory for AI-assisted test automation" src="assets/banner-light.svg" width="680">
+  <img alt="Spindle: team memory for AI-assisted test automation" src="assets/banner-light.svg" width="680">
 </picture>
+
+*Formerly SpiderMem.*
 
 **Your AI assistant remembers what your team already built, fixed and learned, so every new test pack starts from experience instead of from scratch.**
 
-[![Version](https://img.shields.io/badge/version-0.5.0-6f42c1)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-0.5.1-6f42c1)](CHANGELOG.md)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue)](LICENSE)
 [![Python](https://img.shields.io/badge/python-3.8%2B-3776AB?logo=python&logoColor=white)](#-quick-start)
 [![Dependencies](https://img.shields.io/badge/dependencies-zero-brightgreen)](#-why-its-different)
@@ -35,13 +37,13 @@ Test automation teams solve the same problems again and again:
 - ⏱️ Under pressure, "fixes" like a 5-second sleep or a deleted assertion slip in and get copied.
 - 📦 When the team moves to a new client or project, all that know-how stays behind.
 
-## 💡 What SpiderMem does
+## 💡 What Spindle does
 
-SpiderMem gives your automation repo a **memory that Copilot reads before it writes a single line of test code**, and keeps adding to as the team works.
+Spindle gives your automation repo a **memory that Copilot reads before it writes a single line of test code**, and keeps adding to as the team works.
 
 - 🕸️ **Remembers** your framework conventions, applications under test, environments, patterns, gotchas and past packs, as plain markdown in your repo.
 - 🔎 **Finds what you already have.** It catalogues every reusable function, page object and fixture, so Copilot reuses them instead of writing duplicates.
-- 🩹 **Turns errors into answers.** Paste a failure message, and SpiderMem shows the fix the team recorded last time.
+- 🩹 **Turns errors into answers.** Paste a failure message, and Spindle shows the fix the team recorded last time.
 - 🛡️ **Protects you from bad habits.** Shortcuts like sleeps, `force: true` or removed assertions are stored as warnings, never as guidance.
 - 🧳 **Travels with you.** Export what you learned as a scrubbed kit and import it into the next project.
 
@@ -64,7 +66,7 @@ SpiderMem gives your automation repo a **memory that Copilot reads before it wri
 | 💬 | **Prompts to remember** | Copilot offers to save what it learned at the right moments. A commit reminder and a PR checkbox catch the rest. |
 | 🧳 | **Memory kits** | Export reusable knowledge as a client-scrubbed zip and import it into another project in one command. |
 | ⚖️ | **Governed mode** *(optional)* | Patterns start as candidates and need evidence plus a named approver. AI agents can't approve anything. |
-| 📈 | **Efficacy tracking** | Copilot records when a pattern was used, helped or was wrong. SpiderMem shows which patterns earn their place and proposes the ones to retire. |
+| 📈 | **Efficacy tracking** | Copilot records when a pattern was used, helped or was wrong. Spindle shows which patterns earn their place and proposes the ones to retire. |
 | 🔖 | **Memory stamp** | A short version hash of the memory for PR notes, so you always know what a pack was built from. |
 | ✅ | **Evals and CI** | Test cases prove search still finds what it should. One command runs structure checks, the secret scan and evals in CI. |
 
@@ -74,14 +76,14 @@ SpiderMem gives your automation repo a **memory that Copilot reads before it wri
 
 ```mermaid
 flowchart LR
-    A["👩‍💻 Engineer in<br/>Copilot Chat"] -->|/new-pack, /recall| B["🧩 SpiderMem skills<br/>and slash commands"]
-    B -->|calls| C["🕷️ SpiderMem tool<br/>(local MCP server)"]
+    A["👩‍💻 Engineer in<br/>Copilot Chat"] -->|/new-pack, /recall| B["🧩 Spindle skills<br/>and slash commands"]
+    B -->|calls| C["🕷️ Spindle tool<br/>(local MCP server)"]
     C <-->|reads and writes| D[("🕸️ spider/<br/>markdown memory")]
     A -->|opens what it reuses| E["📁 Your repo's code<br/>page objects, helpers"]
     D <-->|pull requests| F["👥 Your team<br/>via git"]
 ```
 
-1. **Install** SpiderMem into your automation repo with one command.
+1. **Install** Spindle into your automation repo with one command.
 2. **Harvest** the repo once to build the first memory and the code catalogue.
 3. **Work as usual.** Before writing a test, Copilot checks memory for patterns, gotchas and reusable code. After the task, it offers to remember what's new.
 4. **Share through git.** Memory changes go through pull requests like code, so the whole team gets them on the next pull.
@@ -110,7 +112,7 @@ Each fact is one dated line you can read, review and edit:
 
 ## 🎬 See it in action
 
-Paste an error into Copilot Chat. SpiderMem answers with the known fix, the patterns that apply, what *not* to do, and the code you already have:
+Paste an error into Copilot Chat. Spindle answers with the known fix, the patterns that apply, what *not* to do, and the code you already have:
 
 ```text
 Known errors:
@@ -131,7 +133,7 @@ Code you can reuse:
 
 ## ✅ Supported today
 
-SpiderMem 0.5 focuses on one stack and does it well:
+Spindle 0.5 focuses on one stack and does it well:
 
 | | Supported now |
 |---|---|
@@ -146,20 +148,20 @@ Harvest can already read Cypress, Selenium, WebdriverIO, pytest, Robot Framework
 
 ## 🚀 Quick start
 
-**1. Get SpiderMem**
+**1. Get Spindle**
 
 ```bash
-git clone https://github.com/AbhiAuto/SpiderMem.git
+git clone https://github.com/AbhiAuto/Spindle.git
 ```
 
 **2. Install it into your Playwright repo**
 
 ```bash
 # macOS / Linux
-python3 SpiderMem/install_vscode.py path/to/your-playwright-repo --name "Your QA team"
+python3 Spindle/install_vscode.py path/to/your-playwright-repo --name "Your QA team"
 
 # Windows
-python SpiderMem\install_vscode.py path\to\your-playwright-repo --name "Your QA team"
+python Spindle\install_vscode.py path\to\your-playwright-repo --name "Your QA team"
 ```
 
 Optional flags: `--governed` (patterns need evidence and an approver) and `--ci` (adds a GitHub Actions check).
@@ -187,7 +189,7 @@ Optional flags: `--governed` (patterns need evidence and an approver) and `--ci`
 
 | Command | Use it when |
 |---|---|
-| `/spider-harvest` | A repo is new to SpiderMem, or its structure changed a lot |
+| `/spider-harvest` | A repo is new to Spindle, or its structure changed a lot |
 | `/new-pack` | You need a new test pack built from what the team already has |
 | `/recall` | You want to know what the team knows, or you have an error message |
 | `/log-gotcha` | You fixed a flaky test or hit an environment problem |
@@ -212,7 +214,7 @@ Everything also works from the terminal with `spider.py`. See the [full guide](d
 
 ## 🧭 Why it's different
 
-| | Typical AI memory | SpiderMem |
+| | Typical AI memory | Spindle |
 |---|---|---|
 | Storage | Cloud service or vector database | Plain markdown in your repo |
 | Review | Hidden, hard to inspect | Pull requests, like code |
@@ -238,30 +240,31 @@ Everything also works from the terminal with `spider.py`. See the [full guide](d
 | 🔜 | Official support for Selenium, Cypress and other frameworks |
 | 💭 | Shared team memory across repos, client walls, handover packs |
 
-Have an idea or need a different stack? [Open an issue](https://github.com/AbhiAuto/SpiderMem/issues).
+Have an idea or need a different stack? [Open an issue](https://github.com/AbhiAuto/Spindle/issues).
 
 ---
 
 ## 📦 Versions
 
-The latest release is **0.5.0**. Each version is listed in the [changelog](CHANGELOG.md).
+The latest release is **0.5.1**. Each version is listed in the [changelog](CHANGELOG.md).
 
 | Version | Highlights |
 |---|---|
-| **0.5.0** | Secret removal, shortcut detection, error signatures, ranked matching, governed mode, efficacy, stamp, evals and CI |
+| **0.5.1** | Renamed from SpiderMem to Spindle |
+| 0.5.0 | Secret removal, shortcut detection, error signatures, ranked matching, governed mode, efficacy, stamp, evals and CI |
 | 0.4.x | Memory kits (export/import), shared Claude + Copilot repo layout |
 | 0.3.x | Capability catalogue, "use when" triggers, commit reminder, `spider/` folder |
 | 0.2.0 | VS Code + Copilot support, harvest, pack builder, MCP server |
 | 0.1.0 | Role-shaped markdown memory |
 
-Updating is safe: run the installer again. It refreshes SpiderMem's files and never touches your `spider/` memory.
+Updating is safe: run the installer again. It refreshes Spindle's files and never touches your `spider/` memory.
 
 ---
 
 ## 🗂️ Repository layout
 
 ```text
-SpiderMem/
+Spindle/
 ├── install_vscode.py          one-command installer
 ├── assets/                    logo, banners and social preview image
 ├── skills/
@@ -277,7 +280,7 @@ SpiderMem/
 
 ## 🧩 Beyond test automation
 
-SpiderMem's core is role-shaped memory. It ships with roles for account managers, software engineers, project managers and QE practice leads, and you can write your own in minutes from `skills/spider/roles/_template.md`. Test automation is where it's most developed today.
+Spindle's core is role-shaped memory. It ships with roles for account managers, software engineers, project managers and QE practice leads, and you can write your own in minutes from `skills/spider/roles/_template.md`. Test automation is where it's most developed today.
 
 ---
 
@@ -299,6 +302,6 @@ Built by **Abhilash Giridharan** as an open experiment in making AI-assisted tes
 
 <div align="center">
 
-⭐ **If SpiderMem saves your team time, star the repo so others can find it.**
+⭐ **If Spindle saves your team time, star the repo so others can find it.**
 
 </div>

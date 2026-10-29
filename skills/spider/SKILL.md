@@ -3,9 +3,9 @@ name: spider
 description: Role-aware work memory. Use when the user asks to remember, save or log something from their work, asks what they did, decided, promised or sent before ("what did I pitch to X", "what's open on Y", "who did I meet at Z"), says "spider" or "/spider", or finishes a substantial task worth keeping. Stores memory as plain markdown files the user owns.
 ---
 
-# Spider
+# Spindle
 
-Spider keeps a memory of the user's work in a folder called the **web**. The web is shaped by the user's role, so a sales lead's web holds accounts, contacts and deals, while an engineer's web holds services, decisions and incidents. Everything is plain markdown, so the user owns it, can read it, can put it in git, and can point any other LLM at it.
+Spindle keeps a memory of the user's work in a folder called the **web**. The web is shaped by the user's role, so a sales lead's web holds accounts, contacts and deals, while an engineer's web holds services, decisions and incidents. Everything is plain markdown, so the user owns it, can read it, can put it in git, and can point any other LLM at it.
 
 Three words, used throughout:
 
@@ -62,7 +62,7 @@ Rules for every strand:
 - Link threads that relate with `[[thread-id]]` in the text and add the id to `links` in frontmatter.
 - Give technique or how-to threads `use_when` triggers: the words someone would use when they need it, including synonyms (`--use-when "otp, mfa, two-step"`). Retrieval is by words, so triggers are what stop a pattern being missed.
 - For a gotcha, store the error text it fixes (`--error "<error message>"`, or `error` in `spider_add`). Pasting that error into `spider_match` later finds the fix, even when numbers like timeouts differ.
-- Record the real fix, not the shortcut. If the fix was a sleep, `force`, a raised timeout or retries, a removed or weakened assertion, or a swallowed error, Spider stores the line as `avoid`: it is shown as a warning and never offered as guidance. When that happens, ask what the proper fix was and record that as its own line.
+- Record the real fix, not the shortcut. If the fix was a sleep, `force`, a raised timeout or retries, a removed or weakened assertion, or a swallowed error, Spindle stores the line as `avoid`: it is shown as a warning and never offered as guidance. When that happens, ask what the proper fix was and record that as its own line.
 - Secrets and personal details (keys, tokens, passwords, connection strings, e-mail addresses, URLs, hosts, IP addresses) are removed automatically when a line is written. Still don't paste them in.
 - Pass `--by` with the person's name when you know who found something. In governed mode it counts as evidence.
 - When a commitment is completed, flip its `open` to `done` in place (`spider.py done <web> <thread> "<text>"`).
@@ -113,7 +113,7 @@ When the user asks for a tidy-up ("spider, clean up", "weekly review"):
 - Run `python scripts/spider.py check <web>` and fix anything it reports.
 - Run `spider.py scan <web>` for secrets, and `spider.py prune <web>` for patterns that are disputed or unused. Show the proposals; a person decides.
 
-## Using Spider outside Claude
+## Using Spindle outside Claude
 
 This file and a role file work as custom instructions for any LLM that can read and write files. For chat tools that can't write files, the user pastes the strands the model proposes into the web themselves, or uses the CLI (`spider.py add`). See `docs/other-llms.md`.
 

@@ -103,7 +103,7 @@ class InstallerTest(unittest.TestCase):
             self.assertTrue((gh / "skills" / "spider-pack-builder" / "SKILL.md").is_file())
             self.assertTrue((gh / "prompts" / "new-pack.prompt.md").is_file())
             self.assertTrue((gh / "instructions" / "spider-tests.instructions.md").is_file())
-            self.assertIn("Spider memory updated", (gh / "pull_request_template.md").read_text())
+            self.assertIn("Spindle memory updated", (gh / "pull_request_template.md").read_text())
             text = (gh / "copilot-instructions.md").read_text()
             self.assertTrue(text.startswith("Our own rules."))
             self.assertEqual(text.count("spider:start"), 1)

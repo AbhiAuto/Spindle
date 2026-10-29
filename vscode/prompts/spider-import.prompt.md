@@ -1,5 +1,5 @@
 ---
-description: 'Spider: import a memory kit from another project'
+description: 'Spindle: import a memory kit from another project'
 agent: 'agent'
 argument-hint: 'Path to the kit (.zip or folder)'
 ---

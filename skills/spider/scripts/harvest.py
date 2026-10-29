@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Harvest an existing test automation repo into a Spider web.
+"""Harvest an existing test automation repo into a Spindle web.
 
 Static scan only: no code is executed and no code is copied into memory.
 It records the stack, layout, reusable assets (as paths), tags, retries,
