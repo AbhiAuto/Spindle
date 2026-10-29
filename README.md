@@ -1,8 +1,9 @@
 <div align="center">
 
-# 🕷️ SpiderMem
-
-### Team memory for AI-assisted test automation
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/banner-dark.svg">
+  <img alt="SpiderMem: team memory for AI-assisted test automation" src="assets/banner-light.svg" width="680">
+</picture>
 
 **Your AI assistant remembers what your team already built, fixed and learned, so every new test pack starts from experience instead of from scratch.**
 
@@ -262,6 +263,7 @@ Updating is safe: run the installer again. It refreshes SpiderMem's files and ne
 ```text
 SpiderMem/
 ├── install_vscode.py          one-command installer
+├── assets/                    logo, banners and social preview image
 ├── skills/
 │   ├── spider/                memory skill, roles, scripts, MCP server
 │   └── spider-pack-builder/   builds test packs from memory
