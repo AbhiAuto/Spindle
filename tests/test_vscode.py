@@ -10,10 +10,10 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-SCRIPTS = ROOT / "skills" / "spider" / "scripts"
+SCRIPTS = ROOT / "skills" / "spindle" / "scripts"
 sys.path.insert(0, str(SCRIPTS))
 sys.path.insert(0, str(ROOT))
-import spider  # noqa: E402
+import spindle  # noqa: E402
 import harvest  # noqa: E402
 import install_vscode  # noqa: E402
 
@@ -31,7 +31,7 @@ class HarvestTest(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
         self.web = Path(self.tmp.name) / "web"
-        quiet(spider.main, "init", self.web, "--role", "test-automation-engineer")
+        quiet(spindle.main, "init", self.web, "--role", "test-automation-engineer")
 
     def tearDown(self):
         self.tmp.cleanup()
@@ -48,7 +48,7 @@ class HarvestTest(unittest.TestCase):
         self.assertEqual(len(f["skips"]), 1)
         self.assertEqual(f["retries"][0][1], "2")
         self.assertIn(".github/workflows/e2e.yml", f["ci"])
-        self.assertFalse(any("spider" in p for p in f["helpers"] + f["tests"]))
+        self.assertFalse(any("spindle" in p for p in f["helpers"] + f["tests"]))
 
     def test_dry_run_writes_nothing(self):
         quiet(harvest.main, SAMPLE, self.web)
@@ -61,7 +61,7 @@ class HarvestTest(unittest.TestCase):
         _, out = quiet(harvest.main, SAMPLE, self.web, "--write")
         self.assertIn("Nothing new", out)
         self.assertEqual(first, f.read_text())
-        code, out = quiet(spider.main, "check", self.web)
+        code, out = quiet(spindle.main, "check", self.web)
         self.assertEqual(code, 0, out)
 
     def test_java_and_python_detection(self):
@@ -83,7 +83,7 @@ class HarvestTest(unittest.TestCase):
 
     def test_refuses_non_automation_role(self):
         other = Path(self.tmp.name) / "web2"
-        quiet(spider.main, "init", other, "--role", "account-manager")
+        quiet(spindle.main, "init", other, "--role", "account-manager")
         with self.assertRaises(SystemExit):
             quiet(harvest.main, SAMPLE, other)
 
@@ -92,75 +92,115 @@ class InstallerTest(unittest.TestCase):
     def test_install_and_reinstall(self):
         with tempfile.TemporaryDirectory() as d:
             repo = Path(d) / "repo"
-            shutil.copytree(SAMPLE, repo, ignore=shutil.ignore_patterns("spider"))
+            shutil.copytree(SAMPLE, repo, ignore=shutil.ignore_patterns("spindle"))
             (repo / ".github" / "copilot-instructions.md").write_text("Our own rules.\n")
             (repo / ".vscode").mkdir()
             (repo / ".vscode" / "mcp.json").write_text('{"servers": {"other": {"command": "x"}}}')
             quiet(install_vscode.main, repo, "--python", "python")
             quiet(install_vscode.main, repo)
             gh = repo / ".github"
-            self.assertTrue((gh / "skills" / "spider" / "SKILL.md").is_file())
-            self.assertTrue((gh / "skills" / "spider-pack-builder" / "SKILL.md").is_file())
+            self.assertTrue((gh / "skills" / "spindle" / "SKILL.md").is_file())
+            self.assertTrue((gh / "skills" / "spindle-pack-builder" / "SKILL.md").is_file())
             self.assertTrue((gh / "prompts" / "new-pack.prompt.md").is_file())
-            self.assertTrue((gh / "instructions" / "spider-tests.instructions.md").is_file())
+            self.assertTrue((gh / "instructions" / "spindle-tests.instructions.md").is_file())
             self.assertIn("Spindle memory updated", (gh / "pull_request_template.md").read_text())
             text = (gh / "copilot-instructions.md").read_text()
             self.assertTrue(text.startswith("Our own rules."))
-            self.assertEqual(text.count("spider:start"), 1)
+            self.assertEqual(text.count("spindle:start"), 1)
             mcp = json.loads((repo / ".vscode" / "mcp.json").read_text())
             self.assertIn("other", mcp["servers"])
-            self.assertIn("spider_mcp.py", mcp["servers"]["spider"]["args"][0])
-            self.assertTrue((repo / "spider" / "profile.md").is_file())
+            self.assertIn("spindle_mcp.py", mcp["servers"]["spindle"]["args"][0])
+            self.assertTrue((repo / "spindle" / "profile.md").is_file())
 
-    def test_old_spider_web_is_moved(self):
+    def test_old_spindle_web_is_moved(self):
         with tempfile.TemporaryDirectory() as d:
             repo = Path(d) / "repo"
-            shutil.copytree(SAMPLE, repo, ignore=shutil.ignore_patterns("spider"))
+            shutil.copytree(SAMPLE, repo, ignore=shutil.ignore_patterns("spindle"))
             subprocess.run(["git", "init", "-q"], cwd=repo)
-            quiet(spider.main, "init", repo / "spider-web", "--role", "test-automation-engineer")
-            quiet(spider.main, "add", repo / "spider-web", "x", "insight", "keep me", "--type", "app")
+            quiet(spindle.main, "init", repo / "spider-web", "--role", "test-automation-engineer")
+            quiet(spindle.main, "add", repo / "spider-web", "x", "insight", "keep me", "--type", "app")
             subprocess.run(["git", "add", "-A"], cwd=repo)
             (repo / ".gitattributes").write_text("spider-web/threads/**/*.md merge=union\n")
             _, out = quiet(install_vscode.main, repo, "--no-hook")
             self.assertIn("Moved your memory", out)
             self.assertFalse((repo / "spider-web").exists())
-            self.assertIn("keep me", (repo / "spider" / "threads" / "app" / "x.md").read_text())
-            self.assertIn("spider/threads", (repo / ".gitattributes").read_text())
+            self.assertIn("keep me", (repo / "spindle" / "threads" / "app" / "x.md").read_text())
+            self.assertIn("spindle/threads", (repo / ".gitattributes").read_text())
             mcp = json.loads((repo / ".vscode" / "mcp.json").read_text())
-            self.assertTrue(mcp["servers"]["spider"]["env"]["SPIDER_WEB"].endswith("/spider"))
+            self.assertTrue(mcp["servers"]["spindle"]["env"]["SPINDLE_WEB"].endswith("/spindle"))
+
+    def test_upgrade_from_before_rename(self):
+        with tempfile.TemporaryDirectory() as d:
+            repo = Path(d) / "repo"
+            shutil.copytree(SAMPLE, repo, ignore=shutil.ignore_patterns("spindle"))
+            subprocess.run(["git", "init", "-q"], cwd=repo)
+            quiet(spindle.main, "init", repo / "spider", "--role", "test-automation-engineer")
+            quiet(spindle.main, "add", repo / "spider", "x", "insight", "keep me", "--type", "app")
+            gh = repo / ".github"
+            for f in ["skills/spider/SKILL.md", "skills/spider-pack-builder/SKILL.md", "prompts/spider-harvest.prompt.md",
+                      "instructions/spider-tests.instructions.md", "workflows/spider.yml"]:
+                (gh / f).parent.mkdir(parents=True, exist_ok=True)
+                (gh / f).write_text("old\n")
+            (gh / "copilot-instructions.md").write_text("Team rules.\n\n<!-- spider:start -->\nold\n<!-- spider:end -->\n")
+            (gh / "pull_request_template.md").write_text("- [ ] Spider memory updated\n")
+            (repo / ".vscode").mkdir()
+            (repo / ".vscode" / "mcp.json").write_text(json.dumps({"servers": {"spider": {}, "other": {}}}))
+            hook = repo / ".git" / "hooks" / "pre-commit"
+            hook.write_text('"$P" .github/skills/spider/scripts/spider_hook.py || true\n')
+            subprocess.run(["git", "add", "-A"], cwd=repo)
+            _, out = quiet(install_vscode.main, repo)
+            self.assertIn("Moved your memory from spider/", out)
+            self.assertFalse((repo / "spider").exists())
+            self.assertIn("keep me", (repo / "spindle" / "threads" / "app" / "x.md").read_text())
+            for f in ["skills/spider", "skills/spider-pack-builder", "prompts/spider-harvest.prompt.md",
+                      "instructions/spider-tests.instructions.md", "workflows/spider.yml"]:
+                self.assertFalse((gh / f).exists(), f)
+            self.assertTrue((gh / "skills" / "spindle" / "SKILL.md").is_file())
+            self.assertTrue((gh / "workflows" / "spindle.yml").is_file())
+            ci = (gh / "copilot-instructions.md").read_text()
+            self.assertIn("Team rules.", ci)
+            self.assertNotIn("spider:start", ci)
+            self.assertIn("spindle:start", ci)
+            servers = json.loads((repo / ".vscode" / "mcp.json").read_text())["servers"]
+            self.assertEqual(sorted(servers), ["other", "spindle"])
+            pr = (gh / "pull_request_template.md").read_text()
+            self.assertEqual(pr.count("Spindle memory updated"), 1)
+            self.assertNotIn("Spider", pr)
+            self.assertIn("/spindle/scripts/spindle_hook.py", hook.read_text())
+            self.assertNotIn("spider_hook", hook.read_text())
 
     def test_refuses_clashing_folders(self):
         with tempfile.TemporaryDirectory() as d:
             repo = Path(d)
-            (repo / "spider").mkdir()
-            (repo / "spider" / "crawler.py").write_text("x = 1\n")
+            (repo / "spindle").mkdir()
+            (repo / "spindle" / "crawler.py").write_text("x = 1\n")
             with self.assertRaises(SystemExit):
                 quiet(install_vscode.main, repo)
             self.assertFalse((repo / ".github").exists())
-            quiet(spider.main, "init", repo / "spider-web", "--role", "test-automation-engineer")
+            quiet(spindle.main, "init", repo / "spider-web", "--role", "test-automation-engineer")
             with self.assertRaises(SystemExit):
                 quiet(install_vscode.main, repo)
 
     def test_harvest_skips_memory_only_at_root(self):
         with tempfile.TemporaryDirectory() as d:
             repo = Path(d)
-            quiet(spider.main, "init", repo / "spider", "--role", "test-automation-engineer")
-            (repo / "src" / "spider" / "pages").mkdir(parents=True)
-            (repo / "src" / "spider" / "pages" / "HomePage.ts").write_text("export class HomePage {}\n")
+            quiet(spindle.main, "init", repo / "spindle", "--role", "test-automation-engineer")
+            (repo / "src" / "spindle" / "pages").mkdir(parents=True)
+            (repo / "src" / "spindle" / "pages" / "HomePage.ts").write_text("export class HomePage {}\n")
             f = harvest.scan(repo)
-            self.assertIn("src/spider/pages/HomePage.ts", f["pages"])
-            self.assertFalse(any(p.startswith("spider/") for p in sum([f[k] for k in ("pages", "helpers", "tests")], [])))
+            self.assertIn("src/spindle/pages/HomePage.ts", f["pages"])
+            self.assertFalse(any(p.startswith("spindle/") for p in sum([f[k] for k in ("pages", "helpers", "tests")], [])))
 
     def test_prompt_files_have_frontmatter(self):
         for p in (ROOT / "vscode" / "prompts").glob("*.prompt.md"):
-            meta, body = spider.split_frontmatter(p.read_text())
+            meta, body = spindle.split_frontmatter(p.read_text())
             self.assertIn("description", meta, p.name)
             self.assertEqual(meta.get("agent"), "agent", p.name)
-            self.assertIn("spider", body.lower(), p.name)
+            self.assertIn("spindle", body.lower(), p.name)
 
     def test_skill_frontmatter(self):
-        for name in ("spider", "spider-pack-builder"):
-            meta, _ = spider.split_frontmatter((ROOT / "skills" / name / "SKILL.md").read_text())
+        for name in ("spindle", "spindle-pack-builder"):
+            meta, _ = spindle.split_frontmatter((ROOT / "skills" / name / "SKILL.md").read_text())
             self.assertEqual(meta.get("name"), name)
             self.assertTrue(meta.get("description"))
 
@@ -169,25 +209,25 @@ class McpTest(unittest.TestCase):
     def test_protocol(self):
         with tempfile.TemporaryDirectory() as d:
             web = Path(d) / "web"
-            quiet(spider.main, "init", web, "--role", "test-automation-engineer")
+            quiet(spindle.main, "init", web, "--role", "test-automation-engineer")
             msgs = [
                 {"jsonrpc": "2.0", "id": 1, "method": "initialize", "params": {"protocolVersion": "2025-06-18"}},
                 {"jsonrpc": "2.0", "method": "notifications/initialized"},
                 {"jsonrpc": "2.0", "id": 2, "method": "tools/list"},
-                {"jsonrpc": "2.0", "id": 3, "method": "tools/call", "params": {"name": "spider_harvest",
+                {"jsonrpc": "2.0", "id": 3, "method": "tools/call", "params": {"name": "spindle_harvest",
                  "arguments": {"repo": str(SAMPLE), "write": True}}},
-                {"jsonrpc": "2.0", "id": 4, "method": "tools/call", "params": {"name": "spider_find",
+                {"jsonrpc": "2.0", "id": 4, "method": "tools/call", "params": {"name": "spindle_find",
                  "arguments": {"kind": "asset"}}},
-                {"jsonrpc": "2.0", "id": 5, "method": "tools/call", "params": {"name": "spider_add",
+                {"jsonrpc": "2.0", "id": 5, "method": "tools/call", "params": {"name": "spindle_add",
                  "arguments": {"thread": "x", "kind": "bogus", "text": "y"}}},
                 {"jsonrpc": "2.0", "id": 6, "method": "nope"},
             ]
             stdin = "\n".join(json.dumps(m) for m in msgs) + "\n"
-            r = subprocess.run([sys.executable, str(SCRIPTS / "spider_mcp.py")], input=stdin, text=True,
-                               capture_output=True, env={"SPIDER_WEB": str(web), "PATH": ""}, timeout=60)
+            r = subprocess.run([sys.executable, str(SCRIPTS / "spindle_mcp.py")], input=stdin, text=True,
+                               capture_output=True, env={"SPINDLE_WEB": str(web), "PATH": ""}, timeout=60)
             out = [json.loads(l) for l in r.stdout.splitlines()]
             self.assertEqual([m["id"] for m in out], [1, 2, 3, 4, 5, 6])
-            self.assertEqual(out[0]["result"]["serverInfo"]["name"], "spider")
+            self.assertEqual(out[0]["result"]["serverInfo"]["name"], "spindle")
             self.assertEqual(len(out[1]["result"]["tools"]), 15)
             self.assertFalse(out[2]["result"]["isError"])
             self.assertIn("pages/LoginPage.ts", out[3]["result"]["content"][0]["text"])
@@ -215,7 +255,7 @@ class HarvestSkipTest(unittest.TestCase):
                 "src/api/ItemsApi.ts": "export class ItemsApi {}\n",
                 "tests/api/items.api.spec.ts": "test('x', async () => {});\n",
                 "evals/cases/a/candidates/bad/src/pages/BadPage.ts": "export class BadPage {}\n",
-                ".claude/skills/spider/scripts/spider.py": "def x(): pass\n",
+                ".claude/skills/spindle/scripts/spindle.py": "def x(): pass\n",
             }.items():
                 (repo / f).parent.mkdir(parents=True, exist_ok=True)
                 (repo / f).write_text(text)

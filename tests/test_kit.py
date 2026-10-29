@@ -9,16 +9,16 @@ import zipfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / "skills" / "spider" / "scripts"))
-import spider  # noqa: E402
+sys.path.insert(0, str(ROOT / "skills" / "spindle" / "scripts"))
+import spindle  # noqa: E402
 
-SAMPLE_WEB = ROOT / "examples" / "sample-playwright-repo" / "spider"
+SAMPLE_WEB = ROOT / "examples" / "sample-playwright-repo" / "spindle"
 
 
 def quiet(*args):
     out = io.StringIO()
     with contextlib.redirect_stdout(out):
-        code = spider.main([str(a) for a in args])
+        code = spindle.main([str(a) for a in args])
     return code, out.getvalue()
 
 
@@ -26,12 +26,12 @@ class KitTest(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
         self.d = Path(self.tmp.name)
-        self.src = self.d / "src" / "spider"
+        self.src = self.d / "src" / "spindle"
         shutil.copytree(SAMPLE_WEB, self.src)
         quiet("add", self.src, "otp-login", "gotcha", "Stub lags at https://mail.acme-internal.com, ask ops@acme.com or 10.1.2.3",
               "--src", "JIRA ACME-42")
         quiet("add", self.src, "otp-login", "commitment", "Raise ticket with Acme ops")
-        self.dst = self.d / "dst" / "spider"
+        self.dst = self.d / "dst" / "spindle"
         quiet("init", self.dst, "--role", "test-automation-engineer")
 
     def tearDown(self):
@@ -78,7 +78,7 @@ class KitTest(unittest.TestCase):
     def test_import_new_then_idempotent(self):
         kit, _ = self.export()
         quiet("import", self.dst, kit)
-        t = spider.Thread(self.dst / "threads" / "pattern" / "otp-login.md")
+        t = spindle.Thread(self.dst / "threads" / "pattern" / "otp-login.md")
         self.assertIn("pw-kit", t.listv("imported_from"))
         self.assertTrue(all("src:kit-pw-kit" in s["text"] for s in t.strands))
         self.assertIn("otp", t.listv("use_when"))
@@ -93,7 +93,7 @@ class KitTest(unittest.TestCase):
         quiet("add", self.dst, "otp-login", "pattern", "Our own OTP note", "--type", "pattern", "--use-when", "otp, sms code")
         kit, _ = self.export()
         quiet("import", self.dst, kit)
-        t = spider.Thread(self.dst / "threads" / "pattern" / "otp-login.md")
+        t = spindle.Thread(self.dst / "threads" / "pattern" / "otp-login.md")
         self.assertIn("Our own OTP note", t.path.read_text())
         self.assertIn("loginWithOtp", t.path.read_text())
         self.assertEqual(t.listv("use_when")[:2], ["otp", "sms code"])
@@ -104,7 +104,7 @@ class KitTest(unittest.TestCase):
         _, out = quiet("import", self.dst, kit, "--dry-run")
         self.assertIn("Dry run", out)
         self.assertFalse((self.dst / "threads" / "pattern" / "otp-login.md").exists())
-        other = self.d / "sales" / "spider"
+        other = self.d / "sales" / "spindle"
         quiet("init", other, "--role", "account-manager")
         _, out = quiet("import", other, kit)
         self.assertIn("skipped", out)

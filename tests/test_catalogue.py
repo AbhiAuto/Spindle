@@ -9,12 +9,12 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-SCRIPTS = ROOT / "skills" / "spider" / "scripts"
+SCRIPTS = ROOT / "skills" / "spindle" / "scripts"
 sys.path.insert(0, str(SCRIPTS))
 import catalogue  # noqa: E402
 import harvest  # noqa: E402
-import spider  # noqa: E402
-import spider_hook  # noqa: E402
+import spindle  # noqa: E402
+import spindle_hook  # noqa: E402
 
 SAMPLE = ROOT / "examples" / "sample-playwright-repo"
 
@@ -76,13 +76,13 @@ class MatchTest(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
         self.web = Path(self.tmp.name) / "web"
-        shutil.copytree(SAMPLE / "spider", self.web)
+        shutil.copytree(SAMPLE / "spindle", self.web)
 
     def tearDown(self):
         self.tmp.cleanup()
 
     def test_triggers_and_catalogue(self):
-        _, out = quiet(spider.main, "match", self.web, "Withdraw a claim for a user with two-step login and attach a document")
+        _, out = quiet(spindle.main, "match", self.web, "Withdraw a claim for a user with two-step login and attach a document")
         self.assertIn("otp-login", out)
         self.assertIn("file-upload", out)
         code_part = out.split("Code you can reuse:")[1]
@@ -90,21 +90,21 @@ class MatchTest(unittest.TestCase):
         self.assertIn("uploadEvidence", code_part)
 
     def test_no_false_trigger_inside_words(self):
-        _, out = quiet(spider.main, "match", self.web, "bottle of water")
+        _, out = quiet(spindle.main, "match", self.web, "bottle of water")
         self.assertNotIn("otp-login", out.split("Code you can reuse:")[0])
 
     def test_use_when_added_and_validated(self):
-        quiet(spider.main, "add", self.web, "iframe-handling", "pattern", "Use frameLocator", "--type", "pattern",
+        quiet(spindle.main, "add", self.web, "iframe-handling", "pattern", "Use frameLocator", "--type", "pattern",
               "--use-when", "iframe, embedded frame")
-        quiet(spider.main, "add", self.web, "iframe-handling", "pattern", "Second line", "--use-when", "IFRAME, frame")
-        t = spider.Thread(self.web / "threads" / "pattern" / "iframe-handling.md")
+        quiet(spindle.main, "add", self.web, "iframe-handling", "pattern", "Second line", "--use-when", "IFRAME, frame")
+        t = spindle.Thread(self.web / "threads" / "pattern" / "iframe-handling.md")
         self.assertEqual(t.listv("use_when"), ["iframe", "embedded frame", "frame"])
         self.assertIn("[use when: iframe, embedded frame, frame]", (self.web / "index.md").read_text())
-        code, out = quiet(spider.main, "check", self.web)
+        code, out = quiet(spindle.main, "check", self.web)
         self.assertEqual(code, 0, out)
 
     def test_index_mentions_catalogue(self):
-        quiet(spider.main, "index", self.web)
+        quiet(spindle.main, "index", self.web)
         self.assertIn("Capability catalogue:", (self.web / "index.md").read_text())
 
 
@@ -112,8 +112,8 @@ class HarvestCatalogueTest(unittest.TestCase):
     def test_catalogue_written_and_stale_lines_superseded(self):
         with tempfile.TemporaryDirectory() as d:
             repo, web = Path(d) / "repo", Path(d) / "web"
-            shutil.copytree(SAMPLE, repo, ignore=shutil.ignore_patterns("spider"))
-            quiet(spider.main, "init", web, "--role", "test-automation-engineer")
+            shutil.copytree(SAMPLE, repo, ignore=shutil.ignore_patterns("spindle"))
+            quiet(spindle.main, "init", web, "--role", "test-automation-engineer")
             quiet(harvest.main, repo, web, "--write")
             self.assertTrue((web / "catalogue.md").is_file())
             (repo / "utils" / "dates.ts").write_text("/** Today as ISO. */\nexport function isoToday() {}\n")
@@ -123,7 +123,7 @@ class HarvestCatalogueTest(unittest.TestCase):
             thread = (web / "threads" / "framework" / "repo.md").read_text()
             self.assertIn("[asset superseded] Helpers (2)", thread)
             self.assertIn("[asset] Helpers (3)", thread)
-            code, out = quiet(spider.main, "check", web)
+            code, out = quiet(spindle.main, "check", web)
             self.assertEqual(code, 0, out)
             _, out = quiet(harvest.main, repo, web, "--write")
             self.assertIn("Nothing new", out)
@@ -131,21 +131,21 @@ class HarvestCatalogueTest(unittest.TestCase):
 
 class HookTest(unittest.TestCase):
     def test_reminder_logic(self):
-        self.assertIsNotNone(spider_hook.reminder(["fixtures/auth.ts"]))
-        self.assertIsNotNone(spider_hook.reminder(["src/test/java/pages/HomePage.java"]))
-        self.assertIsNone(spider_hook.reminder(["fixtures/auth.ts", "spider/threads/app/x.md"]))
-        self.assertIsNone(spider_hook.reminder(["tests/claims/new-claim.spec.ts"]))
-        self.assertIsNone(spider_hook.reminder(["README.md", "package.json"]))
+        self.assertIsNotNone(spindle_hook.reminder(["fixtures/auth.ts"]))
+        self.assertIsNotNone(spindle_hook.reminder(["src/test/java/pages/HomePage.java"]))
+        self.assertIsNone(spindle_hook.reminder(["fixtures/auth.ts", "spindle/threads/app/x.md"]))
+        self.assertIsNone(spindle_hook.reminder(["tests/claims/new-claim.spec.ts"]))
+        self.assertIsNone(spindle_hook.reminder(["README.md", "package.json"]))
 
     def test_hook_never_blocks(self):
         with tempfile.TemporaryDirectory() as d:
             repo = Path(d)
             run = lambda *a: subprocess.run(a, cwd=repo, capture_output=True, text=True)
             run("git", "init", "-q")
-            (repo / ".github" / "skills" / "spider" / "scripts").mkdir(parents=True)
-            shutil.copy(SCRIPTS / "spider_hook.py", repo / ".github" / "skills" / "spider" / "scripts")
-            self.assertIn("added", run(sys.executable, ".github/skills/spider/scripts/spider_hook.py", "--install").stdout)
-            self.assertIn("already", run(sys.executable, ".github/skills/spider/scripts/spider_hook.py", "--install").stdout)
+            (repo / ".github" / "skills" / "spindle" / "scripts").mkdir(parents=True)
+            shutil.copy(SCRIPTS / "spindle_hook.py", repo / ".github" / "skills" / "spindle" / "scripts")
+            self.assertIn("added", run(sys.executable, ".github/skills/spindle/scripts/spindle_hook.py", "--install").stdout)
+            self.assertIn("already", run(sys.executable, ".github/skills/spindle/scripts/spindle_hook.py", "--install").stdout)
             (repo / "pages").mkdir()
             (repo / "pages" / "Cart.ts").write_text("export class Cart {}\n")
             run("git", "add", "-A")

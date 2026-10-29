@@ -11,7 +11,7 @@ How to make your own role:
 2. thread_types: the things you track. Each becomes a folder in your web.
 3. strand_kinds: the kinds of facts you log. Keep it under ten.
 4. Fill in the three sections below in your own words. Be specific to your job.
-5. Run: python scripts/spider.py check-role roles/<your-role>.md
+5. Run: python scripts/spindle.py check-role roles/<your-role>.md
 -->
 
 ## Capture

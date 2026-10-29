@@ -1,7 +1,7 @@
 # Capability catalogue
 
 Generated 2026-10-28 from the code by harvest. 12 capabilities in 6 files.
-Don't edit by hand: add doc comments in the code and re-run harvest. Search it with `spider.py match`.
+Don't edit by hand: add doc comments in the code and re-run harvest. Search it with `spindle.py match`.
 
 ## api/claimsClient.ts
 

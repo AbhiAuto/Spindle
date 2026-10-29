@@ -189,7 +189,7 @@ def build(repo, files, date):
             total += 1
     head = ["# Capability catalogue", "",
             f"Generated {date} from the code by harvest. {total} capabilities in {nfiles} files.",
-            "Don't edit by hand: add doc comments in the code and re-run harvest. Search it with `spider.py match`."]
+            "Don't edit by hand: add doc comments in the code and re-run harvest. Search it with `spindle.py match`."]
     return "\n".join(head + sections) + "\n", total
 
 

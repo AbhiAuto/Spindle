@@ -3,25 +3,25 @@
 
 Standard library only. Python 3.8+.
 
-  spider.py init <web> --role <role> [--name NAME]
-  spider.py add <web> <thread> <kind> "text" [--type T] [--name N] [--due D] [--open] [--date D] [--src S]
-  spider.py done <web> <thread> "part of the commitment text"
-  spider.py index <web>
-  spider.py check <web>
-  spider.py check-role <role-file>
-  spider.py find <web> [query] [--kind K] [--type T] [--tag G] [--open] [--since D]
-  spider.py due <web> [--days N]
-  spider.py match <web> "scenario text"
-  spider.py export <web> <kit.zip|folder> [--name N] [--redact "Acme, Northwind"] [--dry-run]
-  spider.py import <web> <kit.zip|folder> [--dry-run]
-  spider.py scan <web> [--fix]                      secrets and personal details in memory
-  spider.py candidates|efficacy|prune <web>         governed patterns and whether they help
-  spider.py approve|retire <web> <pattern> --by NAME
-  spider.py feedback <web> <thread> --used|--helped|--wrong [--why W]
-  spider.py stamp <web>                             a version hash of the memory
-  spider.py eval <web> <cases.json> [--baseline F] [--write-baseline F]
-  spider.py ci <web>                                check + scan + evals, for CI
-  spider.py roles
+  spindle.py init <web> --role <role> [--name NAME]
+  spindle.py add <web> <thread> <kind> "text" [--type T] [--name N] [--due D] [--open] [--date D] [--src S]
+  spindle.py done <web> <thread> "part of the commitment text"
+  spindle.py index <web>
+  spindle.py check <web>
+  spindle.py check-role <role-file>
+  spindle.py find <web> [query] [--kind K] [--type T] [--tag G] [--open] [--since D]
+  spindle.py due <web> [--days N]
+  spindle.py match <web> "scenario text"
+  spindle.py export <web> <kit.zip|folder> [--name N] [--redact "Acme, Northwind"] [--dry-run]
+  spindle.py import <web> <kit.zip|folder> [--dry-run]
+  spindle.py scan <web> [--fix]                      secrets and personal details in memory
+  spindle.py candidates|efficacy|prune <web>         governed patterns and whether they help
+  spindle.py approve|retire <web> <pattern> --by NAME
+  spindle.py feedback <web> <thread> --used|--helped|--wrong [--why W]
+  spindle.py stamp <web>                             a version hash of the memory
+  spindle.py eval <web> <cases.json> [--baseline F] [--write-baseline F]
+  spindle.py ci <web>                                check + scan + evals, for CI
+  spindle.py roles
 """
 import argparse
 import datetime as dt
@@ -144,13 +144,13 @@ def resolve_role(role):
     cand = ROLES_DIR / (role if role.endswith(".md") else role + ".md")
     if cand.is_file():
         return cand
-    raise SystemExit(f"Role not found: {role}. Run 'spider.py roles' to list them.")
+    raise SystemExit(f"Role not found: {role}. Run 'spindle.py roles' to list them.")
 
 
 def load_web(web):
     web = Path(web)
     if not (web / "profile.md").is_file():
-        raise SystemExit(f"No web at {web} (profile.md missing). Run 'spider.py init' first.")
+        raise SystemExit(f"No web at {web} (profile.md missing). Run 'spindle.py init' first.")
     profile, _ = split_frontmatter((web / "profile.md").read_text(encoding="utf-8"))
     role_meta, _ = load_role(web / "role.md") if (web / "role.md").is_file() else ({}, "")
     threads = []
@@ -491,12 +491,12 @@ def cmd_match(a):
 def write_index(web):
     web = Path(web)
     _, _, threads = load_web(web)
-    lines = ["# Index", "", f"Generated {today()}. {len(threads)} threads. Run 'spider.py index' to refresh.", ""]
+    lines = ["# Index", "", f"Generated {today()}. {len(threads)} threads. Run 'spindle.py index' to refresh.", ""]
     cat = web / "catalogue.md"
     if cat.is_file():
         n_caps = len(catalogue.parse(cat.read_text(encoding="utf-8")))
         lines += [f"Capability catalogue: {n_caps} reusable functions, classes and fixtures in catalogue.md. "
-                  "Search it with 'spider.py match' before writing a new helper.", ""]
+                  "Search it with 'spindle.py match' before writing a new helper.", ""]
     for t in sorted(threads, key=lambda x: (x.meta.get("type", ""), x.id)):
         last = max((s["date"] for s in t.strands), default="none")
         aliases = t.listv("aliases")
@@ -682,7 +682,7 @@ def cmd_due(a):
 
 
 def main(argv=None):
-    p = argparse.ArgumentParser(prog="spider", description="Role-aware work memory in plain markdown.")
+    p = argparse.ArgumentParser(prog="spindle", description="Role-aware work memory in plain markdown.")
     sub = p.add_subparsers(dest="cmd", required=True)
 
     sub.add_parser("roles", help="list built-in roles").set_defaults(fn=cmd_roles)

@@ -3,7 +3,7 @@ description: 'Spindle: create a test automation pack from team memory'
 agent: 'agent'
 argument-hint: 'App or module, pack type (smoke, regression, API, E2E), scope'
 ---
-Use the spider-pack-builder skill.
+Use the spindle-pack-builder skill.
 
 Application or module: ${input:app} (for example: Claims portal, new claim journey)
 Pack type: ${input:type} (for example: regression)

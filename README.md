@@ -9,7 +9,7 @@
 
 **Your AI assistant remembers what your team already built, fixed and learned, so every new test pack starts from experience instead of from scratch.**
 
-[![Version](https://img.shields.io/badge/version-0.5.1-6f42c1)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-0.6.0-6f42c1)](CHANGELOG.md)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue)](LICENSE)
 [![Python](https://img.shields.io/badge/python-3.8%2B-3776AB?logo=python&logoColor=white)](#-quick-start)
 [![Dependencies](https://img.shields.io/badge/dependencies-zero-brightgreen)](#-why-its-different)
@@ -78,7 +78,7 @@ Spindle gives your automation repo a **memory that Copilot reads before it write
 flowchart LR
     A["👩‍💻 Engineer in<br/>Copilot Chat"] -->|/new-pack, /recall| B["🧩 Spindle skills<br/>and slash commands"]
     B -->|calls| C["🕷️ Spindle tool<br/>(local MCP server)"]
-    C <-->|reads and writes| D[("🕸️ spider/<br/>markdown memory")]
+    C <-->|reads and writes| D[("🕸️ spindle/<br/>markdown memory")]
     A -->|opens what it reuses| E["📁 Your repo's code<br/>page objects, helpers"]
     D <-->|pull requests| F["👥 Your team<br/>via git"]
 ```
@@ -91,7 +91,7 @@ flowchart LR
 The memory is a folder of plain markdown next to your code:
 
 ```text
-spider/
+spindle/
 ├── index.md            one line per thread, generated
 ├── catalogue.md        reusable functions, classes and fixtures (from harvest)
 ├── evals.json          retrieval test cases (optional)
@@ -166,12 +166,12 @@ python Spindle\install_vscode.py path\to\your-playwright-repo --name "Your QA te
 
 Optional flags: `--governed` (patterns need evidence and an approver) and `--ci` (adds a GitHub Actions check).
 
-**3. Open the repo in VS Code**, start the `spider` MCP server from `.vscode/mcp.json`, and switch Copilot Chat to **Agent** mode.
+**3. Open the repo in VS Code**, start the `spindle` MCP server from `.vscode/mcp.json`, and switch Copilot Chat to **Agent** mode.
 
 **4. Build the first memory**
 
 ```text
-/spider-harvest
+/spindle-harvest
 ```
 
 **5. Start using it**
@@ -189,22 +189,22 @@ Optional flags: `--governed` (patterns need evidence and an approver) and `--ci`
 
 | Command | Use it when |
 |---|---|
-| `/spider-harvest` | A repo is new to Spindle, or its structure changed a lot |
+| `/spindle-harvest` | A repo is new to Spindle, or its structure changed a lot |
 | `/new-pack` | You need a new test pack built from what the team already has |
 | `/recall` | You want to know what the team knows, or you have an error message |
 | `/log-gotcha` | You fixed a flaky test or hit an environment problem |
 | `/remember` | You worked something out that others should know |
-| `/spider-review` | Weekly health check: secrets, candidates, what helps, what to prune |
-| `/spider-export` | You want to take reusable memory to another project |
-| `/spider-import` | You're starting a project with a kit from another one |
+| `/spindle-review` | Weekly health check: secrets, candidates, what helps, what to prune |
+| `/spindle-export` | You want to take reusable memory to another project |
+| `/spindle-import` | You're starting a project with a kit from another one |
 
-Everything also works from the terminal with `spider.py`. See the [full guide](docs/vscode.md).
+Everything also works from the terminal with `spindle.py`. See the [full guide](docs/vscode.md).
 
 ---
 
 ## 🛡️ Trust and safety
 
-- 🔐 **Secrets never land in memory.** Redaction runs on every write, import and export, and `spider.py scan` checks existing files.
+- 🔐 **Secrets never land in memory.** Redaction runs on every write, import and export, and `spindle.py scan` checks existing files.
 - 🚫 **No bad habits.** Shortcut fixes are stored as `avoid` and shown only as warnings.
 - 👤 **People decide.** In governed mode, only a named person approves or retires a pattern. The MCP tools give agents no way to do it.
 - 🧳 **Kits are untrusted until proven.** Imports have size limits, a field whitelist, and redaction and shortcut checks on every line.
@@ -246,18 +246,21 @@ Have an idea or need a different stack? [Open an issue](https://github.com/AbhiA
 
 ## 📦 Versions
 
-The latest release is **0.5.1**. Each version is listed in the [changelog](CHANGELOG.md).
+The latest release is **0.6.0**. Each version is listed in the [changelog](CHANGELOG.md).
 
 | Version | Highlights |
 |---|---|
-| **0.5.1** | Renamed from SpiderMem to Spindle |
+| **0.6.0** | Spindle names throughout: `spindle/` memory, `/spindle-*` commands, `spindle.py`. Older installs upgrade automatically |
+| 0.5.1 | Renamed from SpiderMem to Spindle |
 | 0.5.0 | Secret removal, shortcut detection, error signatures, ranked matching, governed mode, efficacy, stamp, evals and CI |
 | 0.4.x | Memory kits (export/import), shared Claude + Copilot repo layout |
 | 0.3.x | Capability catalogue, "use when" triggers, commit reminder, `spider/` folder |
 | 0.2.0 | VS Code + Copilot support, harvest, pack builder, MCP server |
 | 0.1.0 | Role-shaped markdown memory |
 
-Updating is safe: run the installer again. It refreshes Spindle's files and never touches your `spider/` memory.
+Updating is safe: run the installer again. It refreshes Spindle's files and never touches your `spindle/` memory.
+
+Coming from a version before 0.6.0? The same command moves your `spider/` memory to `spindle/` unchanged (with `git mv`, so history is kept) and replaces the old skills, commands, MCP entry and hook path. Commit the result, and ask each teammate to run `python3 .github/skills/spindle/scripts/spindle_hook.py --install` once.
 
 ---
 
@@ -268,8 +271,8 @@ Spindle/
 ├── install_vscode.py          one-command installer
 ├── assets/                    logo, banners and social preview image
 ├── skills/
-│   ├── spider/                memory skill, roles, scripts, MCP server
-│   └── spider-pack-builder/   builds test packs from memory
+│   ├── spindle/                memory skill, roles, scripts, MCP server
+│   └── spindle-pack-builder/   builds test packs from memory
 ├── vscode/                    slash commands, Copilot instructions, CI template
 ├── examples/                  a sample Playwright repo with memory filled in
 ├── docs/                      full guide and setup for other assistants
@@ -280,7 +283,7 @@ Spindle/
 
 ## 🧩 Beyond test automation
 
-Spindle's core is role-shaped memory. It ships with roles for account managers, software engineers, project managers and QE practice leads, and you can write your own in minutes from `skills/spider/roles/_template.md`. Test automation is where it's most developed today.
+Spindle's core is role-shaped memory. It ships with roles for account managers, software engineers, project managers and QE practice leads, and you can write your own in minutes from `skills/spindle/roles/_template.md`. Test automation is where it's most developed today.
 
 ---
 

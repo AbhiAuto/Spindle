@@ -2,6 +2,16 @@
 
 All notable changes to Spindle (formerly SpiderMem) are listed here. Versions follow [Semantic Versioning](https://semver.org/). Until 1.0, minor versions may change the memory format; the installer migrates older memories when they do.
 
+## [0.6.0] - 2026-10-29
+
+### Changed
+- Spindle names throughout. The memory folder is now `spindle/`, the commands are `/spindle-harvest`, `/spindle-review`, `/spindle-export` and `/spindle-import`, the skills are `spindle` and `spindle-pack-builder`, the scripts are `spindle.py`, `spindle_mcp.py` and `spindle_hook.py`, the MCP server and its tools are `spindle` and `spindle_*`, and the environment variable is `SPINDLE_WEB`.
+
+### Upgrading
+- Run the installer again. It moves `spider/` (or `spider-web/`) to `spindle/` unchanged with `git mv`, updates `.gitattributes`, and replaces the old skills, prompts, instructions, CI workflow, MCP entries, instructions block, PR template wording and pre-commit hook path. Your own text is kept.
+- Each teammate runs `spindle_hook.py --install` once in their clone. It updates an old hook line in place.
+- `SPIDER_WEB`, `SPIDER_HOOK_QUIET` and a `spider/` memory folder are still recognised, so nothing breaks before you upgrade.
+
 ## [0.5.1] - 2026-10-29
 
 ### Changed
@@ -68,5 +78,6 @@ All notable changes to Spindle (formerly SpiderMem) are listed here. Versions fo
 ### Added
 - Role-shaped markdown memory (threads and strands), a CLI, role templates and tests.
 
+[0.6.0]: https://github.com/AbhiAuto/Spindle/releases/tag/v0.6.0
 [0.5.1]: https://github.com/AbhiAuto/Spindle/releases/tag/v0.5.1
 [0.5.0]: https://github.com/AbhiAuto/Spindle/releases/tag/v0.5.0

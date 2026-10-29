@@ -8,20 +8,20 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / "skills" / "spider" / "scripts"))
-import spider  # noqa: E402
+sys.path.insert(0, str(ROOT / "skills" / "spindle" / "scripts"))
+import spindle  # noqa: E402
 
-ROLES = ROOT / "skills" / "spider" / "roles"
+ROLES = ROOT / "skills" / "spindle" / "roles"
 
 
 def run(*args):
     out = io.StringIO()
     with contextlib.redirect_stdout(out):
-        code = spider.main([str(a) for a in args])
+        code = spindle.main([str(a) for a in args])
     return code, out.getvalue()
 
 
-class SpiderTest(unittest.TestCase):
+class SpindleTest(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
         self.web = Path(self.tmp.name) / "web"
@@ -95,7 +95,7 @@ class SpiderTest(unittest.TestCase):
     def test_links_sync_to_frontmatter(self):
         run("add", self.web, "jane", "contact", "Head of QA", "--type", "person")
         run("add", self.web, "acme", "contact", "Met [[jane]]", "--type", "account")
-        t = spider.Thread(self.web / "threads" / "account" / "acme.md")
+        t = spindle.Thread(self.web / "threads" / "account" / "acme.md")
         self.assertEqual(t.listv("links"), ["jane"])
 
     # --- check ---

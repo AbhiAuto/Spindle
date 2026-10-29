@@ -10,19 +10,19 @@ import zipfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / "skills" / "spider" / "scripts"))
+sys.path.insert(0, str(ROOT / "skills" / "spindle" / "scripts"))
 import redact  # noqa: E402
 import shortcuts  # noqa: E402
-import spider  # noqa: E402
+import spindle  # noqa: E402
 
-SAMPLE_WEB = ROOT / "examples" / "sample-playwright-repo" / "spider"
+SAMPLE_WEB = ROOT / "examples" / "sample-playwright-repo" / "spindle"
 
 
 def run(*args):
     out = io.StringIO()
     with contextlib.redirect_stdout(out):
         try:
-            code = spider.main([str(a) for a in args])
+            code = spindle.main([str(a) for a in args])
         except SystemExit as e:
             code = e.code if isinstance(e.code, int) else 1
             out.write(str(e.code))
@@ -83,7 +83,7 @@ class ShortcutTest(unittest.TestCase):
 class WebCase(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
-        self.web = Path(self.tmp.name) / "spider"
+        self.web = Path(self.tmp.name) / "spindle"
         shutil.copytree(SAMPLE_WEB, self.web)
 
     def tearDown(self):
@@ -140,7 +140,7 @@ class MatchTest(WebCase):
         first = out.split("Memory that applies:")[1].strip().splitlines()[0]
         self.assertIn("otp-login", first)
         self.assertIn("use when 'two-step'", first)
-        res = spider.compute_match(self.web, "user with two-step login")
+        res = spindle.compute_match(self.web, "user with two-step login")
         self.assertEqual(res["memory"][0][0].id, "otp-login")
         self.assertIn("loginWithOtp", " ".join(r["symbol"] for r, _, _ in res["code"][:3]))
 
@@ -154,7 +154,7 @@ class GovernanceTest(WebCase):
             "--use-when", "otp, two-step", "--by", "Ravi")
 
     def test_candidate_then_approve_with_evidence(self):
-        t = spider.Thread(self.gweb / "threads" / "pattern" / "otp-login.md")
+        t = spindle.Thread(self.gweb / "threads" / "pattern" / "otp-login.md")
         self.assertEqual(t.meta["review"], "candidate")
         code, out = run("approve", self.gweb, "otp-login", "--by", "Abhi")
         self.assertNotEqual(code, 0)
@@ -165,7 +165,7 @@ class GovernanceTest(WebCase):
         self.assertIn("READY", out)
         code, out = run("approve", self.gweb, "otp-login", "--by", "Abhi")
         self.assertEqual(code, 0, out)
-        t = spider.Thread(self.gweb / "threads" / "pattern" / "otp-login.md")
+        t = spindle.Thread(self.gweb / "threads" / "pattern" / "otp-login.md")
         self.assertEqual((t.meta["review"], t.meta["approved_by"]), ("approved", "Abhi"))
 
     def test_override_and_retire(self):
@@ -296,7 +296,7 @@ class KitHardeningTest(WebCase):
         kit = self.zip_kit({"threads/pattern/p.md": "---\nid: p\ntype: pattern\nname: P\nreview: approved\n---\n"
                                                     "- 2026-01-01 [pattern] use the stub\n"})
         run("import", gov, kit)
-        t = spider.Thread(gov / "threads" / "pattern" / "p.md")
+        t = spindle.Thread(gov / "threads" / "pattern" / "p.md")
         self.assertEqual((t.meta["review"], t.meta["kit_review"]), ("candidate", "approved"))
 
 

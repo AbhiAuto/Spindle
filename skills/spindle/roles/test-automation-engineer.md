@@ -54,4 +54,4 @@ When creating a `pattern` thread, always give it `use_when` triggers: the words 
 - "How do we usually do <technique>?" : the pattern thread, plus `pattern` strands mentioning it across frameworks.
 - "Have we seen this flake before?" : `gotcha` strands matching the error text or test name.
 - "What can I reuse for <module>?" : `asset` strands on the framework thread plus assets from packs that covered the same module.
-- "Start a new pack for <app>" : use the spider-pack-builder skill.
+- "Start a new pack for <app>" : use the spindle-pack-builder skill.

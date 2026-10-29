@@ -4,10 +4,10 @@
 Never blocks a commit. Prints a short reminder so work done outside Copilot
 (or when Copilot forgot to ask) still ends up in memory.
 
-  python3 spider_hook.py --install     add it to this repo's pre-commit hook (once per clone)
-  python3 spider_hook.py               what the hook runs (checks staged files)
+  python3 spindle_hook.py --install     add it to this repo's pre-commit hook (once per clone)
+  python3 spindle_hook.py               what the hook runs (checks staged files)
 
-Silence it for one commit with SPIDER_HOOK_QUIET=1 git commit ...
+Silence it for one commit with SPINDLE_HOOK_QUIET=1 git commit ...
 """
 import os
 import re
@@ -19,11 +19,11 @@ REUSABLE_DIR = re.compile(r"(^|/)(pages?|page[-_]?objects?|screens|utils?|helper
                           r"clients?|lib|steps?|step[-_]?definitions|stepdefs|commands|components)/", re.I)
 CODE_EXT = (".ts", ".js", ".tsx", ".jsx", ".mjs", ".py", ".java", ".cs", ".kt", ".robot")
 TEST_FILE = re.compile(r"(\.spec\.|\.test\.|\.cy\.|^test_|_test\.py$|Tests?\.(java|cs|kt)$)")
-MARK = "spider_hook.py"
+MARK = "spindle_hook.py"
 HOOK = """#!/bin/sh
 # Spindle: remind to update team memory (never blocks the commit)
 if command -v python3 >/dev/null 2>&1; then P=python3; else P=python; fi
-"$P" .github/skills/spider/scripts/spider_hook.py || true
+"$P" .github/skills/spindle/scripts/spindle_hook.py || true
 """
 
 
@@ -32,9 +32,9 @@ def git(*args):
 
 
 def reminder(staged):
-    if os.environ.get("SPIDER_HOOK_QUIET"):
+    if os.environ.get("SPINDLE_HOOK_QUIET") or os.environ.get("SPIDER_HOOK_QUIET"):
         return None
-    if any(f.startswith(("spider/", "spider-web/")) for f in staged):
+    if any(f.startswith(("spindle/", "spider/", "spider-web/")) for f in staged):
         return None
     changed = [f for f in staged if f.endswith(CODE_EXT) and REUSABLE_DIR.search(f)
                and not TEST_FILE.search(Path(f).name) and not f.startswith((".github/", ".claude/"))]
@@ -42,7 +42,7 @@ def reminder(staged):
         return None
     shown = ", ".join(changed[:5]) + (f" (+{len(changed) - 5} more)" if len(changed) > 5 else "")
     return ("\nSpindle: you changed reusable test code (" + shown + ") but not the team memory.\n"
-            "  Run /remember in Copilot Chat to save what it does, then re-run /spider-harvest\n"
+            "  Run /remember in Copilot Chat to save what it does, then re-run /spindle-harvest\n"
             "  to refresh the capability catalogue. Skip if there's nothing worth keeping.\n")
 
 
@@ -54,11 +54,16 @@ def install():
     path = Path(hooks) / "pre-commit"
     if path.is_file():
         text = path.read_text(encoding="utf-8", errors="ignore")
+        if "/spider/scripts/spider_hook.py" in text:  # hook from before the Spindle rename
+            text = text.replace("/spider/scripts/spider_hook.py", "/spindle/scripts/spindle_hook.py")
+            path.write_text(text, encoding="utf-8")
+            print("Updated the pre-commit hook to the Spindle path.")
+            return 0
         if MARK in text:
             print("Spindle reminder already in the pre-commit hook.")
             return 0
         print(f"A pre-commit hook already exists at {path}. Add this line to it yourself:\n"
-              f"  python3 .github/skills/spider/scripts/spider_hook.py || true")
+              f"  python3 .github/skills/spindle/scripts/spindle_hook.py || true")
         return 0
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(HOOK, encoding="utf-8")

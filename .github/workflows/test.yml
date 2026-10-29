@@ -12,4 +12,4 @@ jobs:
         with:
           python-version: ${{ matrix.python }}
       - run: python -m unittest discover tests -v
-      - run: for r in skills/spider/roles/*.md; do python skills/spider/scripts/spider.py check-role "$r"; done
+      - run: for r in skills/spindle/roles/*.md; do python skills/spindle/scripts/spindle.py check-role "$r"; done

@@ -19,13 +19,13 @@ from collections import Counter
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import spider  # noqa: E402
+import spindle  # noqa: E402
 import catalogue  # noqa: E402
 
 SKIP_DIRS = {".git", "node_modules", "target", "build", "dist", ".venv", "venv", "__pycache__",
              "bin", "obj", ".idea", ".vscode", "test-results", "playwright-report", "allure-results",
              "reports"}
-MEMORY_DIRS = {"spider", "spider-web"}  # skipped at the repo root only
+MEMORY_DIRS = {"spindle", "spider", "spider-web"}  # skipped at the repo root only
 SKIP_PREFIXES = (".github/skills/", ".github/prompts/", ".github/instructions/", ".github/agents/", ".claude/")
 # agent eval cases hold deliberately good and bad sample code: never learn from them
 SKIP_ANYWHERE = {"evals", "eval-cases", "__snapshots__"}
@@ -250,22 +250,22 @@ def main(argv=None):
         raise SystemExit(f"Not a folder: {repo}")
     found = scan(repo)
     strands = to_strands(found)
-    tid = spider.slugify(found["repo"])
+    tid = spindle.slugify(found["repo"])
     name = a.name or f"{found['repo']} automation framework"
     web = Path(a.web)
-    _, role, threads = spider.load_web(web)
+    _, role, threads = spindle.load_web(web)
     kinds = set(role.get("strand_kinds") or [])
     types = set(role.get("thread_types") or [])
     if types and "framework" not in types:
         raise SystemExit("This web's role has no 'framework' thread type. Use the test-automation-engineer role.")
-    existing = spider.find_thread(threads, tid)
+    existing = spindle.find_thread(threads, tid)
     existing_text = existing.path.read_text(encoding="utf-8") if existing else ""
     if existing and not a.name:
         name = existing.meta.get("name", name)
     new = [(k, t) for k, t in strands if f"] {t} src:harvest" not in existing_text and (not kinds or k in kinds)]
 
     cat_files = found["pages"] + found["helpers"] + found["fixtures"] + found["api"] + found["steps"]
-    cat_text, n_caps = catalogue.build(repo, cat_files, spider.today())
+    cat_text, n_caps = catalogue.build(repo, cat_files, spindle.today())
     cat_path = web / "catalogue.md"
     old_cat = cat_path.read_text(encoding="utf-8") if cat_path.is_file() else ""
     cat_changed = catalogue.parse(old_cat) != catalogue.parse(cat_text)
@@ -290,10 +290,10 @@ def main(argv=None):
         if i == 0 and existing is None:
             args += ["--type", "framework", "--name", name]
         with open_quiet():
-            spider.main(args)
+            spindle.main(args)
     if not new:
         with open_quiet():
-            spider.write_index(web)
+            spindle.write_index(web)
     print(f"\nWrote {len(new)} strand(s) to {web}/threads/framework/{tid}.md"
           + (f" and {n_caps} capabilities to {cat_path}" if cat_changed else ""))
     return 0
@@ -310,7 +310,7 @@ def supersede(path, new_texts):
     keys = {strand_key(t) for t in new_texts}
     out = []
     for line in path.read_text(encoding="utf-8").splitlines():
-        s = spider.parse_strand(line)
+        s = spindle.parse_strand(line)
         if (s and "src:harvest" in s["text"] and "superseded" not in s["flags"]
                 and strand_key(s["text"].replace(" src:harvest", "")) in keys):
             line = line.replace(f"[{s['kind']}", f"[{s['kind']} superseded", 1)

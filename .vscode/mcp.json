@@ -1,10 +1,10 @@
 {
   "servers": {
-    "spider": {
+    "spindle": {
       "type": "stdio",
       "command": "python3",
-      "args": ["${workspaceFolder}/skills/spider/scripts/spider_mcp.py"],
-      "env": { "SPIDER_WEB": "${workspaceFolder}/examples/sample-playwright-repo/spider" }
+      "args": ["${workspaceFolder}/skills/spindle/scripts/spindle_mcp.py"],
+      "env": { "SPINDLE_WEB": "${workspaceFolder}/examples/sample-playwright-repo/spindle" }
     }
   }
 }

@@ -1,8 +1,8 @@
 # Index
 
-Generated 2026-10-29. 5 threads. Run 'spider.py index' to refresh.
+Generated 2026-10-29. 5 threads. Run 'spindle.py index' to refresh.
 
-Capability catalogue: 12 reusable functions, classes and fixtures in catalogue.md. Search it with 'spider.py match' before writing a new helper.
+Capability catalogue: 12 reusable functions, classes and fixtures in catalogue.md. Search it with 'spindle.py match' before writing a new helper.
 
 - [app] claims-portal: Claims portal (aka Claims, claims app), 7 strands, last 2026-09-05, 0 open
 - [framework] sample-playwright-repo: Claims portal e2e (aka claims e2e), 12 strands, last 2026-10-28, 0 open

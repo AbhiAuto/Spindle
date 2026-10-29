@@ -4,9 +4,9 @@ A kit is a folder or .zip holding kit.md (what's inside) and threads/<type>/<id>
 Export picks the reusable parts (framework conventions, patterns, gotchas, decisions)
 and scrubs client details. Import merges a kit into another project's memory.
 
-  spider.py export <web> <kit.zip|folder> [--name N] [--redact "Acme, Northwind"] [--types framework,pattern]
+  spindle.py export <web> <kit.zip|folder> [--name N] [--redact "Acme, Northwind"] [--types framework,pattern]
                    [--kinds ...] [--threads id,id] [--dry-run]
-  spider.py import <web> <kit.zip|folder> [--dry-run]
+  spindle.py import <web> <kit.zip|folder> [--dry-run]
 """
 import datetime as dt
 import re
@@ -15,7 +15,7 @@ from pathlib import Path
 
 import redact as redactor
 import shortcuts
-import spider
+import spindle
 
 MAX_FILES, MAX_FILE_BYTES, MAX_TOTAL_BYTES = 500, 256 * 1024, 5 * 1024 * 1024
 MAX_LINE, MAX_STRANDS = 600, 300
@@ -40,7 +40,7 @@ def scrub(text, terms, keep_ids):
     text = URL_RE.sub("[url removed]", text)
     text = EMAIL_RE.sub("[email removed]", text)
     text = IP_RE.sub("[ip removed]", text)
-    text = spider.LINK_RE.sub(lambda m: f"[[{m.group(1)}]]" if m.group(1) in keep_ids else m.group(1), text)
+    text = spindle.LINK_RE.sub(lambda m: f"[[{m.group(1)}]]" if m.group(1) in keep_ids else m.group(1), text)
     for t in sorted(terms, key=len, reverse=True):
         text = re.sub(r"(?<![\w-])" + re.escape(t) + r"(?![\w-])", "[client]", text, flags=re.I)
     return text
@@ -56,7 +56,7 @@ def source_only(s):
 def select(threads, types, kinds, only_ids, profile=None, include_candidates=False):
     out = []
     for t in threads:
-        state = spider.review_state(t, profile or {})
+        state = spindle.review_state(t, profile or {})
         if state == "retired" or (state == "candidate" and not include_candidates):
             continue
         if only_ids and t.id not in only_ids:
@@ -72,14 +72,14 @@ def select(threads, types, kinds, only_ids, profile=None, include_candidates=Fal
 
 def cmd_export(a):
     web = Path(a.web)
-    profile, role, threads = spider.load_web(web)
+    profile, role, threads = spindle.load_web(web)
     types = [x.strip() for x in a.types.split(",")] if a.types else DEFAULT_TYPES
     kinds = [x.strip() for x in a.kinds.split(",")] if a.kinds else DEFAULT_KINDS
     only = {x.strip() for x in a.threads.split(",")} if a.threads else set()
     chosen = select(threads, types, kinds, only, profile, getattr(a, "include_candidates", False))
     if not chosen:
         raise SystemExit("Nothing to export with those filters.")
-    name = spider.slugify(a.name or f"{web.resolve().parent.name}-kit")
+    name = spindle.slugify(a.name or f"{web.resolve().parent.name}-kit")
     # framework threads are named after the source repo: give them neutral ids in the kit
     new_ids, n_fw = {}, 0
     for t, _ in chosen:
@@ -109,21 +109,21 @@ def cmd_export(a):
                 "links": [new_ids.get(l, l) for l in t.listv("links") if new_ids.get(l, l) in keep_ids]}
         if t.listv("use_when"):
             meta["use_when"] = t.listv("use_when")
-        state = spider.review_state(t, profile)
+        state = spindle.review_state(t, profile)
         if state:
             meta["review"] = state
         lines = []
         for s in strands:
             attrs = " ".join(sorted(s["flags"] - {"open", "done", "superseded"}))
-            text = spider.LINK_RE.sub(lambda m: f"[[{new_ids.get(m.group(1), m.group(1))}]]", s["text"])
+            text = spindle.LINK_RE.sub(lambda m: f"[[{new_ids.get(m.group(1), m.group(1))}]]", s["text"])
             clean = redactor.redact(scrub(text, terms, keep_ids))[0]
             n_scrubbed += clean != text
             lines.append(f"- {s['date']} [{s['kind']}{(' ' + attrs) if attrs else ''}] {clean}")
             n_strands += 1
-        files[f"threads/{meta['type']}/{tid}.md"] = spider.dump_frontmatter(meta) + "\n" + "\n".join(lines) + "\n"
+        files[f"threads/{meta['type']}/{tid}.md"] = spindle.dump_frontmatter(meta) + "\n" + "\n".join(lines) + "\n"
 
-    manifest = spider.dump_frontmatter({
-        "kit": name, "created": spider.today(), "role": profile.get("role", ""),
+    manifest = spindle.dump_frontmatter({
+        "kit": name, "created": spindle.today(), "role": profile.get("role", ""),
         "threads": str(len(files)), "strands": str(n_strands),
         "types": types if not only else sorted({t.meta.get("type") for t, _ in chosen}), "kinds": kinds,
     }) + (
@@ -134,7 +134,7 @@ def cmd_export(a):
         "- Open commitments and superseded lines were left out.\n"
         "- Asset paths point to files in the source project. They only apply if that code was copied across.\n"
         "- Review every file before sharing, and never move a kit between clients without checking it.\n\n"
-        "Import with: python3 .github/skills/spider/scripts/spider.py import spider <this kit>\n\n"
+        "Import with: python3 .github/skills/spindle/scripts/spindle.py import spindle <this kit>\n\n"
         "## Threads\n\n" + "\n".join(f"- {p}" for p in sorted(files)) + "\n")
 
     print(f"Kit '{name}': {len(files)} threads, {n_strands} strands, {n_scrubbed} strands scrubbed, "
@@ -171,9 +171,9 @@ def clean_meta(meta, governed):
         return " ".join(v.split())[:80]
     out = {"id": meta.get("id"), "type": meta.get("type"), "name": item(meta.get("name") or meta.get("id")),
            "aliases": [item(x) for x in _list(meta.get("aliases"))[:8] if item(x)],
-           "tags": [spider.slugify(str(x))[:40] for x in _list(meta.get("tags"))[:10]],
+           "tags": [spindle.slugify(str(x))[:40] for x in _list(meta.get("tags"))[:10]],
            "status": "active",
-           "links": [l for l in _list(meta.get("links"))[:20] if spider.ID_RE.match(str(l))]}
+           "links": [l for l in _list(meta.get("links"))[:20] if spindle.ID_RE.match(str(l))]}
     triggers = [item(x).lower() for x in _list(meta.get("use_when"))[:20] if item(x)]
     if triggers:
         out["use_when"] = triggers
@@ -230,10 +230,10 @@ def read_kit(path):
 
 def cmd_import(a):
     web = Path(a.web)
-    profile, role, threads = spider.load_web(web)
+    profile, role, threads = spindle.load_web(web)
     governed = profile.get("governance") == "governed"
     files = read_kit(a.kit)
-    kit_meta, _ = spider.split_frontmatter(files["kit.md"])
+    kit_meta, _ = spindle.split_frontmatter(files["kit.md"])
     kit_name = kit_meta.get("kit") or Path(a.kit).stem
     types, kinds = set(role.get("thread_types") or []), set(role.get("strand_kinds") or [])
     added_threads, added_strands, merged, skipped = 0, 0, 0, []
@@ -241,28 +241,28 @@ def cmd_import(a):
     for rel, text in sorted(files.items()):
         if rel == "kit.md":
             continue
-        meta, body = spider.split_frontmatter(text)
+        meta, body = spindle.split_frontmatter(text)
         tid, ttype = meta.get("id", ""), meta.get("type", "")
-        if not spider.ID_RE.match(tid or "") or rel != f"threads/{ttype}/{tid}.md":
+        if not spindle.ID_RE.match(tid or "") or rel != f"threads/{ttype}/{tid}.md":
             skipped.append(f"{rel}: id or type doesn't match its path")
             continue
         if types and ttype not in types:
             skipped.append(f"{rel}: this memory's role has no '{ttype}' threads")
             continue
         meta = clean_meta(meta, governed)
-        strands = [spider.parse_strand(l) for l in body.splitlines()[:MAX_STRANDS * 2] if len(l) <= MAX_LINE]
+        strands = [spindle.parse_strand(l) for l in body.splitlines()[:MAX_STRANDS * 2] if len(l) <= MAX_LINE]
         strands = [s for s in strands if s and (not kinds or s["kind"] in kinds)][:MAX_STRANDS]
-        existing = spider.find_thread(threads, tid)
+        existing = spindle.find_thread(threads, tid)
         have = existing.path.read_text(encoding="utf-8") if existing else ""
-        tag = f"src:kit-{spider.slugify(kit_name)}"
+        tag = f"src:kit-{spindle.slugify(kit_name)}"
         new_lines = []
         for s in strands:
             text = redactor.redact(s["text"])[0]
             flags = s["flags"] & {"avoid"}
-            if not flags and s["kind"] in spider.GUIDANCE_KINDS and shortcuts.find(text):
+            if not flags and s["kind"] in spindle.GUIDANCE_KINDS and shortcuts.find(text):
                 flags = {"avoid"}
             line = f"- {s['date']} [{s['kind']}{(' ' + ' '.join(sorted(flags))) if flags else ''}] {text} {tag}"
-            if text not in have and spider.parse_strand(line):
+            if text not in have and spindle.parse_strand(line):
                 new_lines.append(line)
         if not new_lines:
             continue
@@ -288,27 +288,27 @@ def cmd_import(a):
     for rel, meta, existing, lines in plan:
         if existing:
             raw = existing.path.read_text(encoding="utf-8")
-            em, body = spider.split_frontmatter(raw)
+            em, body = spindle.split_frontmatter(raw)
             for key in ("use_when", "aliases", "tags"):
                 cur = _list(em.get(key))
                 extra = [x for x in _list(meta.get(key)) if x.lower() not in [c.lower() for c in cur]]
                 if extra:
                     em[key] = cur + extra
             em["imported_from"] = list(dict.fromkeys(_list(em.get("imported_from")) + [kit_name]))
-            raw = spider.dump_frontmatter(em) + "\n" + body.lstrip("\n")
+            raw = spindle.dump_frontmatter(em) + "\n" + body.lstrip("\n")
             if not raw.endswith("\n"):
                 raw += "\n"
             existing.path.write_text(raw + "\n".join(lines) + "\n", encoding="utf-8")
         else:
             meta["imported_from"] = [kit_name]
-            meta["links"] = [l for l in _list(meta.get("links")) if spider.find_thread(threads, l) or
+            meta["links"] = [l for l in _list(meta.get("links")) if spindle.find_thread(threads, l) or
                              any(m.get("id") == l for _, m, _, _ in plan)]
             path = web / rel
             path.parent.mkdir(parents=True, exist_ok=True)
-            path.write_text(spider.dump_frontmatter(meta) + "\n" + "\n".join(lines) + "\n", encoding="utf-8")
-    spider.write_index(web)
+            path.write_text(spindle.dump_frontmatter(meta) + "\n" + "\n".join(lines) + "\n", encoding="utf-8")
+    spindle.write_index(web)
     print(f"\nImported {added_threads} new thread(s), merged into {merged}, {added_strands} strand(s) added, "
           f"each marked {tag if plan else ''}.")
-    print("Next: run /spider-harvest in this repo so the catalogue reflects this project's own code, "
+    print("Next: run /spindle-harvest in this repo so the catalogue reflects this project's own code, "
           "then check that asset paths from the kit exist here.")
     return 0

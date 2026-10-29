@@ -1,6 +1,6 @@
 ---
-name: spider
-description: Role-aware work memory. Use when the user asks to remember, save or log something from their work, asks what they did, decided, promised or sent before ("what did I pitch to X", "what's open on Y", "who did I meet at Z"), says "spider" or "/spider", or finishes a substantial task worth keeping. Stores memory as plain markdown files the user owns.
+name: spindle
+description: Role-aware work memory. Use when the user asks to remember, save or log something from their work, asks what they did, decided, promised or sent before ("what did I pitch to X", "what's open on Y", "who did I meet at Z"), says "spindle" or "/spindle", or finishes a substantial task worth keeping. Stores memory as plain markdown files the user owns.
 ---
 
 # Spindle
@@ -18,17 +18,17 @@ Three words, used throughout:
 Look for the web in this order and use the first one found:
 
 1. A path the user has given in this conversation.
-2. `SPIDER_WEB` environment variable.
-3. `./spider/` in the current working folder, if it contains `profile.md`. This is where the VS Code installer puts a repo's memory.
-4. `./spider-web/` in the current working folder (older installs).
-5. `~/.spider/` for a personal memory outside any repo.
+2. `SPINDLE_WEB` environment variable.
+3. `./spindle/` in the current working folder, if it contains `profile.md`. This is where the VS Code installer puts a repo's memory.
+4. `./spider/` or `./spider-web/` in the current working folder (installs made before the Spindle rename).
+5. `~/.spindle/` for a personal memory outside any repo.
 
 If none exists, run setup.
 
 ## Setup (first run only)
 
 1. Ask the user one question: which role file fits them. List the files in `roles/` by their `title`. If none fits, offer `roles/_template.md` and build a custom one with them in two or three questions (what things they track, what they want to find later, what they must never store).
-2. Create the web. If a shell is available, run `python scripts/spider.py init <web-path> --role <role-file>`. Otherwise create the same layout by hand (see `references/store-format.md`).
+2. Create the web. If a shell is available, run `python scripts/spindle.py init <web-path> --role <role-file>`. Otherwise create the same layout by hand (see `references/store-format.md`).
 3. Write `profile.md` in the web with the user's name, role, capture mode (default `confirm`) and any extra never-store rules they gave.
 4. Tell the user in one line where the web is and how to use it. Don't lecture.
 
@@ -40,7 +40,7 @@ Read `profile.md` and the role file named in it. Read `index.md` only when you n
 
 Capture when one of these happens:
 
-- The user explicitly asks ("spider, remember this", "log that", "save this").
+- The user explicitly asks ("spindle, remember this", "log that", "save this").
 - A task ends that produced something the role file lists under **Capture**.
 - A task ends and one of the role file's **Offer to remember when** moments happened. Offer even if the user didn't ask. This is the main way memory grows, so don't skip it after long sessions.
 - The user states a fact the role file lists under **Capture** (a new contact, a decision, a deadline).
@@ -61,13 +61,13 @@ Rules for every strand:
 - Put the strand in the thread it is about. If the thread doesn't exist, create it from the role's thread types. Before creating, check `index.md` and thread aliases for the same thing under another name.
 - Link threads that relate with `[[thread-id]]` in the text and add the id to `links` in frontmatter.
 - Give technique or how-to threads `use_when` triggers: the words someone would use when they need it, including synonyms (`--use-when "otp, mfa, two-step"`). Retrieval is by words, so triggers are what stop a pattern being missed.
-- For a gotcha, store the error text it fixes (`--error "<error message>"`, or `error` in `spider_add`). Pasting that error into `spider_match` later finds the fix, even when numbers like timeouts differ.
+- For a gotcha, store the error text it fixes (`--error "<error message>"`, or `error` in `spindle_add`). Pasting that error into `spindle_match` later finds the fix, even when numbers like timeouts differ.
 - Record the real fix, not the shortcut. If the fix was a sleep, `force`, a raised timeout or retries, a removed or weakened assertion, or a swallowed error, Spindle stores the line as `avoid`: it is shown as a warning and never offered as guidance. When that happens, ask what the proper fix was and record that as its own line.
 - Secrets and personal details (keys, tokens, passwords, connection strings, e-mail addresses, URLs, hosts, IP addresses) are removed automatically when a line is written. Still don't paste them in.
 - Pass `--by` with the person's name when you know who found something. In governed mode it counts as evidence.
-- When a commitment is completed, flip its `open` to `done` in place (`spider.py done <web> <thread> "<text>"`).
+- When a commitment is completed, flip its `open` to `done` in place (`spindle.py done <web> <thread> "<text>"`).
 - Never delete history to update a fact. Mark the old strand `superseded` and add the new one.
-- After writing, refresh `index.md` (run `python scripts/spider.py index <web>` if a shell is available, otherwise update the thread's line by hand).
+- After writing, refresh `index.md` (run `python scripts/spindle.py index <web>` if a shell is available, otherwise update the thread's line by hand).
 
 ## Never store
 
@@ -84,10 +84,10 @@ If a capture would break one of these, skip that part silently and keep the rest
 
 When the user asks about past work:
 
-1. For "what applies to this scenario" questions, and for any pasted error message, run `spider_match` (or `spider.py match <web> "<text>"`) first. It returns known errors with their fixes, ranked memory with the reason each item matched, shortcuts to avoid, and reusable code from `catalogue.md`.
+1. For "what applies to this scenario" questions, and for any pasted error message, run `spindle_match` (or `spindle.py match <web> "<text>"`) first. It returns known errors with their fixes, ranked memory with the reason each item matched, shortcuts to avoid, and reusable code from `catalogue.md`.
 1. Otherwise check `index.md` for matching threads (by name, alias, tag or type).
 2. Read those threads. Follow `links` one hop if the question needs it (a person linked to an account).
-3. For cross-cutting questions ("what's open", "what's due this week", "everything tagged ai-testing"), use `python scripts/spider.py find` or `due` if a shell exists, otherwise scan the index and threads.
+3. For cross-cutting questions ("what's open", "what's due this week", "everything tagged ai-testing"), use `python scripts/spindle.py find` or `due` if a shell exists, otherwise scan the index and threads.
 4. Answer directly, with dates. Say which thread an answer came from when there is more than one source. Flag anything older than the role's `stale_after_days` as possibly out of date.
 5. If nothing is found, say so plainly and ask for the missing detail. Don't guess.
 
@@ -97,25 +97,25 @@ Never present an `avoid` line as something to do. If a pattern is shown as `(can
 
 ## After using memory
 
-When you apply a pattern or a gotcha's fix, record it: `spider_feedback` with `used`, or `helped` if it clearly saved time. If it pointed the wrong way, record `wrong` with the reason. This is how the team learns which patterns help (`spider.py efficacy`).
+When you apply a pattern or a gotcha's fix, record it: `spindle_feedback` with `used`, or `helped` if it clearly saved time. If it pointed the wrong way, record `wrong` with the reason. This is how the team learns which patterns help (`spindle.py efficacy`).
 
 ## Governed mode
 
-When `profile.md` has `governance: governed`, new pattern threads start as `candidate`. A person approves them with `spider.py approve <web> <pattern> --by "<name>"` once there's enough evidence (`spider.py candidates` shows it). You can list candidates, efficacy and prune proposals, but you never approve or retire a pattern yourself. Print the command for the person to run instead.
+When `profile.md` has `governance: governed`, new pattern threads start as `candidate`. A person approves them with `spindle.py approve <web> <pattern> --by "<name>"` once there's enough evidence (`spindle.py candidates` shows it). You can list candidates, efficacy and prune proposals, but you never approve or retire a pattern yourself. Print the command for the person to run instead.
 
 ## Maintenance
 
-When the user asks for a tidy-up ("spider, clean up", "weekly review"):
+When the user asks for a tidy-up ("spindle, clean up", "weekly review"):
 
 - List open commitments past their due date and ask which are done.
 - List threads not touched for longer than `stale_after_days` and ask whether to archive them (move to `threads/_archive/`).
 - Merge duplicate threads the user confirms, keeping aliases.
-- Run `python scripts/spider.py check <web>` and fix anything it reports.
-- Run `spider.py scan <web>` for secrets, and `spider.py prune <web>` for patterns that are disputed or unused. Show the proposals; a person decides.
+- Run `python scripts/spindle.py check <web>` and fix anything it reports.
+- Run `spindle.py scan <web>` for secrets, and `spindle.py prune <web>` for patterns that are disputed or unused. Show the proposals; a person decides.
 
 ## Using Spindle outside Claude
 
-This file and a role file work as custom instructions for any LLM that can read and write files. For chat tools that can't write files, the user pastes the strands the model proposes into the web themselves, or uses the CLI (`spider.py add`). See `docs/other-llms.md`.
+This file and a role file work as custom instructions for any LLM that can read and write files. For chat tools that can't write files, the user pastes the strands the model proposes into the web themselves, or uses the CLI (`spindle.py add`). See `docs/other-llms.md`.
 
 ## Changelog
 
