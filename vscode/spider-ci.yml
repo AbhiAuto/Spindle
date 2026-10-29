@@ -1,0 +1,17 @@
+# Spider memory checks: structure, secrets and retrieval evals.
+# Fails the build when the memory is broken, holds a secret, or finds less than it used to.
+name: Spider memory
+on:
+  pull_request:
+    paths: ["spider/**", ".github/skills/spider/**", ".claude/skills/spider/**"]
+  push:
+    branches: [main]
+jobs:
+  spider:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python .github/skills/spider/scripts/spider.py ci spider

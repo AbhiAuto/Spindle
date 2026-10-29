@@ -1,0 +1,7 @@
+[
+  {"id": "otp-login", "request": "write a test for a user with two-step login", "expect": ["otp-login", "loginWithOtp"]},
+  {"id": "upload", "request": "attach a supporting document to a claim", "expect": ["file-upload", "uploadEvidence"]},
+  {"id": "known-error", "request": "Error: locator.setInputFiles: Timeout 45000ms exceeded", "expect": ["claims-portal"]},
+  {"id": "api-data", "request": "create a claim quickly for test setup", "expect": ["createClaimViaApi"]},
+  {"id": "unrelated", "request": "bottle of water", "forbid": ["otp-login", "file-upload"]}
+]

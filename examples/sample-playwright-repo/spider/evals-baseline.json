@@ -1,0 +1,7 @@
+{
+  "otp-login": true,
+  "upload": true,
+  "known-error": true,
+  "api-data": true,
+  "unrelated": true
+}

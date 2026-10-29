@@ -1,0 +1,14 @@
+{
+  "servers": {
+    "spider": {
+      "type": "stdio",
+      "command": "python3",
+      "args": [
+        "${workspaceFolder}/.github/skills/spider/scripts/spider_mcp.py"
+      ],
+      "env": {
+        "SPIDER_WEB": "${workspaceFolder}/spider"
+      }
+    }
+  }
+}
