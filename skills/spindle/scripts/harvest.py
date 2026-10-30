@@ -72,6 +72,9 @@ STEP_DIR_RE = re.compile(r"^(steps?|step[-_]?definitions|stepdefs)$", re.I)
 TAG_RE = re.compile(r"(?<![\w@])@(smoke|regression|sanity|e2e|critical|p[0-3]|wip|flaky|slow|api|ui)\b", re.I)
 SKIP_RE = re.compile(r"\b(test\.fixme|test\.skip|it\.skip|describe\.skip|xit\(|xdescribe\(|@pytest\.mark\.skip|"
                      r"@pytest\.mark\.xfail|@Disabled|@Ignore|enabled\s*=\s*false|\[Ignore|@skip|@wip)")
+# saved sign-in: a setup step writes the browser session once, tests load it instead of logging in
+STATE_PATH_RE = re.compile(r"\bstorage_?[sS]tate\s*[:=]\s*['\"`]([^'\"`]+)['\"`]")
+STATE_SAVE_RE = re.compile(r"\.storage_?[sS]tate\(\s*(\{\s*)?path\s*[:=]")
 RETRY_RES = [re.compile(r"retries\s*:\s*(?:process\.env\.CI\s*\?\s*)?(\d+)"),
              re.compile(r"retryAnalyzer"), re.compile(r"--reruns[= ](\d+)"), re.compile(r"\"retries\"\s*:\s*(\d+)")]
 
@@ -114,7 +117,8 @@ def scan(repo):
     names = {f.as_posix() for f in files}
     found = {"repo": repo.name, "frameworks": [], "languages": [], "configs": [], "tests": [], "pages": [],
              "helpers": [], "fixtures": [], "api": [], "steps": [], "data_dirs": set(), "ci": [],
-             "tags": Counter(), "skips": [], "retries": [], "features": 0}
+             "tags": Counter(), "skips": [], "retries": [], "features": 0,
+             "auth_setup": [], "auth_state": set()}
 
     def add_fw(label):
         if label not in found["frameworks"]:
@@ -184,6 +188,10 @@ def scan(repo):
                 for n, line in enumerate(text.splitlines(), start=1):
                     if SKIP_RE.search(line):
                         found["skips"].append(f"{posix}:{n}")
+            else:
+                found["auth_state"].update(STATE_PATH_RE.findall(text))
+                if STATE_SAVE_RE.search(text):
+                    found["auth_setup"].append(posix)
             if f.name in CONFIG_FILES or "conf" in f.name.lower():
                 for rx in RETRY_RES:
                     m = rx.search(text)
@@ -192,6 +200,7 @@ def scan(repo):
                         break
     found["languages"] = [l for l, _ in langs.most_common(3)]
     found["data_dirs"] = sorted(found["data_dirs"])
+    found["auth_state"] = sorted(found["auth_state"])
     # a test file is never a reusable asset, whatever folder it sits in (tests/api/x.api.spec.ts)
     tests = set(found["tests"])
     for key in ("pages", "helpers", "fixtures", "api", "steps"):
@@ -225,6 +234,11 @@ def to_strands(found):
         s.append(("asset", f"API clients ({len(found['api'])}): {short_list(found['api'])}"))
     if found["steps"]:
         s.append(("asset", f"Step definitions ({len(found['steps'])}): {short_list(found['steps'])}"))
+    if found["auth_setup"] or found["auth_state"]:
+        saves = short_list(found["auth_setup"]) if found["auth_setup"] else "A setup step"
+        to = f" to {short_list(found['auth_state'])}" if found["auth_state"] else ""
+        s.append(("pattern", f"Saved sign-in: {saves} signs in once and saves the session (storageState){to}. "
+                             "Tests start signed in, so don't log in again in each test"))
     if found["data_dirs"]:
         s.append(("data", f"Test data folders: {short_list(found['data_dirs'])}"))
     if found["tags"]:

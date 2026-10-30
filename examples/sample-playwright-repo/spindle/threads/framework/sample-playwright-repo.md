@@ -19,3 +19,4 @@ links: [claims-portal]
 - 2026-10-28 [decision] Retries configured in playwright.config.ts: 2 src:harvest
 - 2026-10-28 [gotcha] 1 skipped, fixme or disabled test(s), check why: tests/claims/new-claim.spec.ts:12 src:harvest
 - 2026-10-28 [env] CI: .github/workflows/e2e.yml src:harvest
+- 2026-10-30 [pattern] Saved sign-in: tests/auth.setup.ts signs in once and saves the session (storageState) to playwright/.auth/user.json. Tests start signed in, so don't log in again in each test src:harvest

@@ -49,6 +49,21 @@ class HarvestTest(unittest.TestCase):
         self.assertEqual(f["retries"][0][1], "2")
         self.assertIn(".github/workflows/e2e.yml", f["ci"])
         self.assertFalse(any("spindle" in p for p in f["helpers"] + f["tests"]))
+        self.assertEqual(f["auth_setup"], ["tests/auth.setup.ts"])
+        self.assertEqual(f["auth_state"], ["playwright/.auth/user.json"])
+        self.assertTrue(any(k == "pattern" and t.startswith("Saved sign-in: tests/auth.setup.ts")
+                            for k, t in harvest.to_strands(f)))
+
+    def test_saved_sign_in_python_and_test_files(self):
+        repo = Path(self.tmp.name) / "py-auth"
+        (repo / "tests").mkdir(parents=True)
+        (repo / "conftest.py").write_text('context.storage_state(path="state/admin.json")\n')
+        (repo / "tests" / "test_x.py").write_text('browser.new_context(storage_state="other.json")\n')
+        f = harvest.scan(repo)
+        self.assertEqual(f["auth_setup"], ["conftest.py"])
+        self.assertEqual(f["auth_state"], [])  # a single test opting in or out isn't the suite's setup
+        none = harvest.scan(Path(self.tmp.name) / "web")
+        self.assertFalse(any(t.startswith("Saved sign-in") for _, t in harvest.to_strands(none)))
 
     def test_dry_run_writes_nothing(self):
         quiet(harvest.main, SAMPLE, self.web)

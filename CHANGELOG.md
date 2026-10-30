@@ -2,6 +2,12 @@
 
 All notable changes to Spindle are listed here. Versions follow [Semantic Versioning](https://semver.org/). Until 1.0, minor versions may change the memory format; the installer migrates older memories when they do.
 
+## [Unreleased]
+
+### Added
+- Harvest spots saved sign-in: a setup step that saves the browser session (Playwright `storageState`, Python `storage_state`) and the file tests load it from. It's recorded as a pattern on the framework thread so Copilot asks for a signed-in page instead of rebuilding the login in each test.
+- The sample Playwright repo signs in once in `tests/auth.setup.ts` and every other test starts signed in. The OTP login pattern now points to the `loggedIn` fixture, and a `signed-in` eval case checks that it's found.
+
 ## [0.6.0] - 2026-10-29
 
 ### Changed

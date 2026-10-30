@@ -2,7 +2,7 @@ import { test as base, Page } from '@playwright/test';
 import { LoginPage } from '../pages/LoginPage';
 import { getLatestOtp } from '../utils/mailStub';
 
-/** Full sign-in including the OTP step, for users with two-step login switched on. */
+/** Full sign-in including the OTP step. Only for users other than the standard claims handler; use loggedIn for that one. */
 export async function loginWithOtp(page: Page, user: string, password: string) {
   await new LoginPage(page).login(user, password);
   const code = await getLatestOtp(page.request, user);
@@ -11,9 +11,8 @@ export async function loginWithOtp(page: Page, user: string, password: string) {
 }
 
 export const test = base.extend<{ loggedIn: Page }>({
-  /** A page already signed in as the standard claims handler, OTP included. */
+  /** A page already signed in as the standard claims handler, from the session saved by tests/auth.setup.ts. */
   loggedIn: async ({ page }, use) => {
-    await loginWithOtp(page, process.env.TEST_USER!, process.env.TEST_PASS!);
     await use(page);
   },
 });

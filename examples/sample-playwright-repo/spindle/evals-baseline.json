@@ -3,5 +3,6 @@
   "upload": true,
   "known-error": true,
   "api-data": true,
+  "signed-in": true,
   "unrelated": true
 }

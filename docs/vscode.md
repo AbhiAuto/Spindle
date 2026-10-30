@@ -37,7 +37,7 @@ On Windows the MCP server uses `python`. On macOS and Linux it uses `python3`. C
 
 1. Open the repo in VS Code and trust the `spindle` MCP server when asked (or start it from the MCP servers view).
 2. Open Copilot Chat in **Agent** mode.
-3. Run `/spindle-harvest`. Spindle scans the repo (nothing is executed), shows what it found (stack, layout, page objects, helpers, fixtures, data, tags, retries, skipped tests, CI), reads a few key files to pick up your conventions, and writes it all after you confirm.
+3. Run `/spindle-harvest`. Spindle scans the repo (nothing is executed), shows what it found (stack, layout, page objects, helpers, fixtures, saved sign-in, data, tags, retries, skipped tests, CI), reads a few key files to pick up your conventions, and writes it all after you confirm.
 
 The memory is useful from that point on.
 

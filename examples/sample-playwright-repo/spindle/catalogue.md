@@ -1,6 +1,6 @@
 # Capability catalogue
 
-Generated 2026-10-28 from the code by harvest. 12 capabilities in 6 files.
+Generated 2026-10-30 from the code by harvest. 12 capabilities in 6 files.
 Don't edit by hand: add doc comments in the code and re-run harvest. Search it with `spindle.py match`.
 
 ## api/claimsClient.ts
@@ -9,8 +9,8 @@ Don't edit by hand: add doc comments in the code and re-run harvest. Search it w
 
 ## fixtures/auth.ts
 
-- fixtures/auth.ts :: loginWithOtp(page, user, password) :: Full sign-in including the OTP step, for users with two-step login switched on.
-- fixtures/auth.ts :: fixture loggedIn :: A page already signed in as the standard claims handler, OTP included.
+- fixtures/auth.ts :: loginWithOtp(page, user, password) :: Full sign-in including the OTP step. Only for users other than the standard claims handler; use loggedIn for that one.
+- fixtures/auth.ts :: fixture loggedIn :: A page already signed in as the standard claims handler, from the session saved by tests/auth.setup.ts.
 
 ## pages/ClaimsPage.ts
 

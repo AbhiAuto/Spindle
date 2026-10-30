@@ -3,5 +3,6 @@
   {"id": "upload", "request": "attach a supporting document to a claim", "expect": ["file-upload", "uploadEvidence"]},
   {"id": "known-error", "request": "Error: locator.setInputFiles: Timeout 45000ms exceeded", "expect": ["claims-portal"]},
   {"id": "api-data", "request": "create a claim quickly for test setup", "expect": ["createClaimViaApi"]},
+  {"id": "signed-in", "request": "new test that needs a signed-in claims handler", "expect": ["otp-login", "loggedIn"]},
   {"id": "unrelated", "request": "bottle of water", "forbid": ["otp-login", "file-upload"]}
 ]
